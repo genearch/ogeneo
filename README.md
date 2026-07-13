@@ -33,3 +33,6 @@ Ogeneo is strictly about travel and adventure. Moments should relate to places, 
 
 
 v5: Updated PieCaken story for Yorkshire Thanksgiving.
+
+
+v6: Curated homepage (9 featured moments), 'Recently' heading.

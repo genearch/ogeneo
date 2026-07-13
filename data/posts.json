@@ -6,7 +6,8 @@
     "kicker": "North Yorkshire",
     "date": "Jul 13, 2026",
     "caption": "North Yorkshire opened up in long green folds beneath a restless sky.",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88"
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88",
+    "featured": true
   },
   {
     "type": "image",
@@ -15,7 +16,8 @@
     "kicker": "Walk",
     "date": "Jul 13",
     "caption": "A quiet lane before the day properly woke up.",
-    "image": "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=88"
+    "image": "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=88",
+    "featured": true
   },
   {
     "type": "image",
@@ -24,13 +26,15 @@
     "kicker": "Moment",
     "date": "Jul 13",
     "caption": "The kind of coffee that briefly convinces you the itinerary is under control.",
-    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1300&q=88"
+    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1300&q=88",
+    "featured": true
   },
   {
     "type": "quote",
     "size": "quote",
     "quote": "A good traveler has no fixed plans and is not intent on arriving.",
-    "cite": "Lao Tzu"
+    "cite": "Lao Tzu",
+    "featured": true
   },
   {
     "type": "image",
@@ -39,7 +43,8 @@
     "kicker": "Croatia",
     "date": "May 2025",
     "caption": "The Adriatic had one last show to put on.",
-    "image": "assets/croatia-dalmatian-sunset.jpg"
+    "image": "assets/croatia-dalmatian-sunset.jpg",
+    "featured": true
   },
   {
     "type": "image",
@@ -48,7 +53,8 @@
     "kicker": "Flight",
     "date": "Jul 12 \u00b7 AA 100",
     "caption": "Eastbound, above the clouds, with optimism packed in the overhead bin.",
-    "image": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=88"
+    "image": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=88",
+    "featured": true
   },
   {
     "type": "image",
@@ -57,7 +63,8 @@
     "kicker": "\u25b6 Video",
     "date": "0:28",
     "caption": "The light lingered longer than expected. Nobody complained.",
-    "image": "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1300&q=88"
+    "image": "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1300&q=88",
+    "featured": true
   },
   {
     "type": "image",
@@ -66,7 +73,8 @@
     "kicker": "Route",
     "date": "6.2 mi \u00b7 2h 14m",
     "caption": "A route assembled from good intentions and several wrong turns.",
-    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=88"
+    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=88",
+    "featured": true
   },
   {
     "type": "image",
@@ -75,7 +83,8 @@
     "kicker": "Food",
     "date": "Yorkshire, England",
     "caption": "An unapologetically American dessert that somehow made perfect sense at Thanksgiving in rural Yorkshire. Red velvet cake, cherry swirl cheesecake, chocolate pecan pie, and cream cheese buttercream. The sort of dessert that makes splitting a slice feel like terrible advice.",
-    "image": "assets/piecaken.jpg"
+    "image": "assets/piecaken.jpg",
+    "featured": true
   },
   {
     "type": "image",
@@ -84,7 +93,8 @@
     "kicker": "View",
     "date": "Apr 2025",
     "caption": "Wind, cliffs, and the Atlantic putting on a show.",
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=88"
+    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=88",
+    "featured": false
   },
   {
     "type": "image",
@@ -93,7 +103,8 @@
     "kicker": "Drive",
     "date": "North Yorkshire",
     "caption": "A narrow road, a wide view, and no useful reason to hurry.",
-    "image": "https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=900&q=88"
+    "image": "https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=900&q=88",
+    "featured": false
   },
   {
     "type": "image",
@@ -102,6 +113,7 @@
     "kicker": "Stay",
     "date": "Jul 11",
     "caption": "A village evening with no reason to hurry.",
-    "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=88"
+    "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=88",
+    "featured": false
   }
 ]

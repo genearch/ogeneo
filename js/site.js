@@ -14,7 +14,9 @@ async function loadPosts() {
   try {
     const response = await fetch("data/posts.json", { cache: "no-store" });
     if (!response.ok) throw new Error("Could not load posts");
-    const posts = await response.json();
+    let posts = await response.json();
+    const featured = posts.filter(p=>p.featured);
+    posts = (featured.length?featured:posts).slice(0,9);
 
     mosaic.innerHTML = posts.map((post, index) => {
       if (post.type === "quote") {
