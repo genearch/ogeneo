@@ -1,0 +1,53 @@
+[
+  {
+    "type": "image",
+    "size": "wide",
+    "title": "The long way into York",
+    "location": "York, England",
+    "date": "July 2026",
+    "caption": "A quiet arrival beneath a sky that could not decide whether to behave.",
+    "image": "https://images.unsplash.com/photo-1543342386-1d4e56b061c9?auto=format&fit=crop&w=1800&q=85"
+  },
+  {
+    "type": "image",
+    "size": "tall",
+    "title": "Stone, ivy, afternoon",
+    "location": "North Yorkshire",
+    "date": "July 2026",
+    "caption": "The sort of lane that makes a person walk slower without announcing why.",
+    "image": "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1400&q=85"
+  },
+  {
+    "type": "image",
+    "size": "medium",
+    "title": "Coffee before weather",
+    "location": "Boroughbridge",
+    "date": "July 2026",
+    "caption": "A small table, a strong cup, and fifteen optimistic minutes without rain.",
+    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=85"
+  },
+  {
+    "type": "quote",
+    "size": "quote",
+    "quote": "Some days the itinerary is merely a rumor.",
+    "location": "Notes from somewhere"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Window seat",
+    "location": "Somewhere north",
+    "date": "July 2026",
+    "caption": "A moving landscape and the deeply British confidence of a paper cup of tea.",
+    "image": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=85"
+  },
+  {
+    "type": "image",
+    "size": "medium",
+    "title": "Market day",
+    "location": "North Yorkshire",
+    "date": "July 2026",
+    "caption": "Flowers, old stone, and enough baked goods to complicate lunch.",
+    "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1400&q=85"
+  }
+]
