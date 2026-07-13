@@ -1,4 +1,4 @@
-# Ogeneo travel v3
+# Ogeneo travel v4
 
 A mobile-first travel journal built with plain HTML, CSS, JavaScript, and JSON.
 
@@ -30,3 +30,6 @@ Upload the contents of this folder to the root of the GitHub repository. Cloudfl
 ## Editorial focus
 
 Ogeneo is strictly about travel and adventure. Moments should relate to places, movement, food, lodging, architecture, scenery, or the experience of being somewhere new.
+
+
+v5: Updated PieCaken story for Yorkshire Thanksgiving.
