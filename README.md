@@ -1,4 +1,4 @@
-# Ogeneo dark v2
+# Ogeneo travel v3
 
 A mobile-first travel journal built with plain HTML, CSS, JavaScript, and JSON.
 
@@ -25,3 +25,8 @@ Photos currently use temporary Unsplash URLs. Replace them with your own Cloudin
 ## Deploy
 
 Upload the contents of this folder to the root of the GitHub repository. Cloudflare Pages will publish the commit automatically.
+
+
+## Editorial focus
+
+Ogeneo is strictly about travel and adventure. Moments should relate to places, movement, food, lodging, architecture, scenery, or the experience of being somewhere new.
