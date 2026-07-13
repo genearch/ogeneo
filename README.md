@@ -1,27 +1,27 @@
-# Ogeneo
+# Ogeneo dark v2
 
-A lightweight travel journal built with plain HTML, CSS, and JavaScript.
+A mobile-first travel journal built with plain HTML, CSS, JavaScript, and JSON.
 
-## Deploy
-
-This repository is designed for Cloudflare Pages:
+## Cloudflare Pages settings
 
 - Framework preset: None
 - Build command: leave blank
-- Build output directory: `/`
+- Build output directory: /
 
-## Edit content
+## Updating posts
 
-Travel cards live in `data/posts.json`.
+Edit `data/posts.json`.
 
-Replace the sample Unsplash image links with Cloudinary URLs when ready.
+Each image card supports these sizes:
 
-## Local preview
+- `hero`
+- `wide`
+- `medium`
+- `tall`
+- `small`
 
-Because the page loads JSON, preview it through a small local server rather than opening `index.html` directly.
+Photos currently use temporary Unsplash URLs. Replace them with your own Cloudinary URLs.
 
-```bash
-python3 -m http.server 8000
-```
+## Deploy
 
-Then visit `http://localhost:8000`.
+Upload the contents of this folder to the root of the GitHub repository. Cloudflare Pages will publish the commit automatically.

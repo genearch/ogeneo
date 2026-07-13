@@ -1,53 +1,107 @@
 [
   {
     "type": "image",
-    "size": "wide",
-    "title": "The long way into York",
-    "location": "York, England",
-    "date": "July 2026",
-    "caption": "A quiet arrival beneath a sky that could not decide whether to behave.",
-    "image": "https://images.unsplash.com/photo-1543342386-1d4e56b061c9?auto=format&fit=crop&w=1800&q=85"
-  },
-  {
-    "type": "image",
-    "size": "tall",
-    "title": "Stone, ivy, afternoon",
-    "location": "North Yorkshire",
-    "date": "July 2026",
-    "caption": "The sort of lane that makes a person walk slower without announcing why.",
-    "image": "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1400&q=85"
+    "size": "hero",
+    "title": "Green hills and endless skies.",
+    "kicker": "North Yorkshire",
+    "date": "Jul 13, 2026",
+    "caption": "North Yorkshire opened up in long green folds beneath a restless sky.",
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88"
   },
   {
     "type": "image",
     "size": "medium",
-    "title": "Coffee before weather",
-    "location": "Boroughbridge",
-    "date": "July 2026",
-    "caption": "A small table, a strong cup, and fifteen optimistic minutes without rain.",
-    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=85"
+    "title": "Morning in Knaresborough",
+    "kicker": "Walk",
+    "date": "Jul 13",
+    "caption": "A quiet lane before the day properly woke up.",
+    "image": "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=88"
+  },
+  {
+    "type": "image",
+    "size": "wide",
+    "title": "Flat white, quiet mind.",
+    "kicker": "Moment",
+    "date": "Jul 13",
+    "caption": "The kind of coffee that briefly convinces you the itinerary is under control.",
+    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1300&q=88"
   },
   {
     "type": "quote",
     "size": "quote",
-    "quote": "Some days the itinerary is merely a rumor.",
-    "location": "Notes from somewhere"
+    "quote": "A good traveler has no fixed plans and is not intent on arriving.",
+    "cite": "Lao Tzu"
   },
   {
     "type": "image",
-    "size": "small",
-    "title": "Window seat",
-    "location": "Somewhere north",
-    "date": "July 2026",
-    "caption": "A moving landscape and the deeply British confidence of a paper cup of tea.",
-    "image": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=85"
+    "size": "tall",
+    "title": "That time in Croatia",
+    "kicker": "\u2708 Dubrovnik",
+    "date": "May 2025",
+    "caption": "Stone, sunlight, and a city that knows exactly how dramatic it is.",
+    "image": "https://images.unsplash.com/photo-1555990793-da11153b2473?auto=format&fit=crop&w=1200&q=88"
   },
   {
     "type": "image",
     "size": "medium",
-    "title": "Market day",
-    "location": "North Yorkshire",
-    "date": "July 2026",
-    "caption": "Flowers, old stone, and enough baked goods to complicate lunch.",
-    "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1400&q=85"
+    "title": "JFK \u2192 LHR",
+    "kicker": "Flight",
+    "date": "Jul 12 \u00b7 AA 100",
+    "caption": "Eastbound, above the clouds, with optimism packed in the overhead bin.",
+    "image": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=88"
+  },
+  {
+    "type": "image",
+    "size": "wide",
+    "title": "Sunset walk along the River Nidd",
+    "kicker": "\u25b6 Video",
+    "date": "0:28",
+    "caption": "The light lingered longer than expected. Nobody complained.",
+    "image": "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1300&q=88"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Today's wander",
+    "kicker": "Route",
+    "date": "6.2 mi \u00b7 2h 14m",
+    "caption": "A route assembled from good intentions and several wrong turns.",
+    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=88"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Pici Cacio e Pepe",
+    "kicker": "Meal",
+    "date": "Florence \u00b7 May 2025",
+    "caption": "Pasta with the confidence to need very little explanation.",
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=88"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Cliffs of Moher",
+    "kicker": "View",
+    "date": "Apr 2025",
+    "caption": "Wind, cliffs, and the Atlantic putting on a show.",
+    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=88"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Lily, always with me.",
+    "kicker": "Companion",
+    "date": "",
+    "caption": "The best traveling companion never needed a passport.",
+    "image": "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=88"
+  },
+  {
+    "type": "image",
+    "size": "small",
+    "title": "Little pubs. Long conversations.",
+    "kicker": "Stay",
+    "date": "Jul 11",
+    "caption": "A village evening with no reason to hurry.",
+    "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=88"
   }
 ]

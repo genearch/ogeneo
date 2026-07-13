@@ -1,70 +1,5 @@
 const mosaic = document.querySelector("#mosaic");
-const storyDialog = document.querySelector("#story-dialog");
-const locationDialog = document.querySelector("#location-dialog");
-
-async function loadStories() {
-  try {
-    const response = await fetch("data/posts.json");
-    if (!response.ok) throw new Error("Could not load posts");
-    const posts = await response.json();
-    renderStories(posts);
-  } catch (error) {
-    mosaic.innerHTML = `<p>Stories are temporarily hiding under the bed.</p>`;
-    console.error(error);
-  }
-}
-
-function renderStories(posts) {
-  mosaic.innerHTML = posts.map((post, index) => {
-    if (post.type === "quote") {
-      return `
-        <article class="story-card quote" aria-label="${escapeHtml(post.location)}">
-          <div class="quote-inner">
-            <blockquote>“${escapeHtml(post.quote)}”</blockquote>
-            <p>${escapeHtml(post.location)}</p>
-          </div>
-        </article>`;
-    }
-
-    return `
-      <button class="story-card ${post.size}" type="button" data-story-index="${index}">
-        <img src="${post.image}" alt="" loading="lazy">
-        <span class="story-overlay">
-          <span class="story-meta">
-            <span>${escapeHtml(post.location)}</span>
-            <span>${escapeHtml(post.date)}</span>
-          </span>
-          <span class="story-title">${escapeHtml(post.title)}</span>
-        </span>
-      </button>`;
-  }).join("");
-
-  mosaic.querySelectorAll("[data-story-index]").forEach(card => {
-    card.addEventListener("click", () => openStory(posts[Number(card.dataset.storyIndex)]));
-  });
-}
-
-function openStory(post) {
-  storyDialog.querySelector(".dialog-media").innerHTML =
-    `<img src="${post.image}" alt="${escapeHtml(post.title)}">`;
-  storyDialog.querySelector(".dialog-meta").textContent = `${post.location} · ${post.date}`;
-  storyDialog.querySelector(".dialog-title").textContent = post.title;
-  storyDialog.querySelector(".dialog-caption").textContent = post.caption;
-  storyDialog.showModal();
-}
-
-function updateYorkTime() {
-  const now = new Date();
-  const formatted = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/London",
-    hour: "numeric",
-    minute: "2-digit",
-    weekday: "long"
-  }).format(now);
-
-  document.querySelector("[data-local-time]").textContent = `${formatted} local time`;
-  document.querySelector("[data-popup-time]").textContent = formatted;
-}
+const dialog = document.querySelector("#story-dialog");
 
 function escapeHtml(value = "") {
   return String(value)
@@ -75,24 +10,76 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
-document.querySelectorAll(".dialog-close").forEach(button => {
-  button.addEventListener("click", () => button.closest("dialog").close());
-});
+async function loadPosts() {
+  try {
+    const response = await fetch("data/posts.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("Could not load posts");
+    const posts = await response.json();
 
-document.querySelector("[data-location-trigger]").addEventListener("click", () => {
-  locationDialog.showModal();
-});
+    mosaic.innerHTML = posts.map((post, index) => {
+      if (post.type === "quote") {
+        return `
+          <article class="card quote">
+            <span class="quote-mark">“</span>
+            <blockquote>${escapeHtml(post.quote)}</blockquote>
+            <cite>— ${escapeHtml(post.cite)}</cite>
+          </article>`;
+      }
+
+      return `
+        <button class="card ${post.size}" type="button" data-index="${index}">
+          <img src="${post.image}" alt="" loading="lazy">
+          <span class="card-copy">
+            <span class="card-kicker">${escapeHtml(post.kicker)}</span>
+            <span class="card-title">${escapeHtml(post.title)}</span>
+            <span class="card-date">${escapeHtml(post.date)}</span>
+          </span>
+        </button>`;
+    }).join("");
+
+    mosaic.querySelectorAll("[data-index]").forEach(card => {
+      card.addEventListener("click", () => openStory(posts[Number(card.dataset.index)]));
+    });
+  } catch (error) {
+    console.error(error);
+    mosaic.innerHTML = "<p>Stories are temporarily unavailable.</p>";
+  }
+}
+
+function openStory(post) {
+  dialog.querySelector(".dialog-media").innerHTML =
+    `<img src="${post.image}" alt="${escapeHtml(post.title)}">`;
+  dialog.querySelector(".dialog-meta").textContent = `${post.kicker} · ${post.date}`;
+  dialog.querySelector(".dialog-title").textContent = post.title;
+  dialog.querySelector(".dialog-caption").textContent = post.caption;
+  dialog.showModal();
+}
+
+function updateLocalTime() {
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/London",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(new Date());
+
+  document.querySelectorAll("[data-local-time]").forEach(el => el.textContent = formatted);
+}
+
+document.querySelector(".dialog-close").addEventListener("click", () => dialog.close());
 
 document.querySelector(".menu-button").addEventListener("click", event => {
   const nav = document.querySelector("#site-nav");
-  const isOpen = nav.classList.toggle("open");
-  event.currentTarget.setAttribute("aria-expanded", String(isOpen));
+  const open = nav.classList.toggle("open");
+  event.currentTarget.setAttribute("aria-expanded", String(open));
 });
 
-document.querySelectorAll(".site-nav a").forEach(link => {
-  link.addEventListener("click", () => document.querySelector("#site-nav").classList.remove("open"));
+document.querySelectorAll(".mobile-tabbar a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.querySelectorAll(".mobile-tabbar a").forEach(item => item.classList.remove("active"));
+    link.classList.add("active");
+  });
 });
 
-updateYorkTime();
-setInterval(updateYorkTime, 30000);
-loadStories();
+updateLocalTime();
+setInterval(updateLocalTime, 30000);
+loadPosts();
