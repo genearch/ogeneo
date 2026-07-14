@@ -1,7 +1,7 @@
 const mosaic = document.querySelector("#mosaic");
 const dialog = document.querySelector("#story-dialog");
 const wanderDialog = document.querySelector("#wander-dialog");
-const wanderTrigger = document.querySelector(".wander-trigger");
+const wanderTrigger = document.querySelector("#wander-trigger");
 
 const LOCATION_API =
   "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
@@ -93,7 +93,6 @@ function updateWanderDetails() {
   if (cardCountryEl) {
     cardCountryEl.textContent = location.country || "";
   }
-  }
 }
 
 async function loadWanderLocation() {
@@ -122,7 +121,32 @@ async function loadWanderLocation() {
 if (wanderTrigger && wanderDialog) {
   wanderTrigger.addEventListener("click", async () => {
     await loadWanderLocation();
-    wanderDialog.showModal();
+
+    if (typeof wanderDialog.showModal === "function") {
+      wanderDialog.showModal();
+    } else {
+      wanderDialog.setAttribute("open", "");
+    }
+  });
+
+  const wanderClose = wanderDialog.querySelector(".dialog-close");
+
+  wanderClose?.addEventListener("click", () => {
+    if (typeof wanderDialog.close === "function") {
+      wanderDialog.close();
+    } else {
+      wanderDialog.removeAttribute("open");
+    }
+  });
+
+  wanderDialog.addEventListener("click", event => {
+    if (event.target !== wanderDialog) return;
+
+    if (typeof wanderDialog.close === "function") {
+      wanderDialog.close();
+    } else {
+      wanderDialog.removeAttribute("open");
+    }
   });
 }
 
@@ -214,11 +238,18 @@ loadPosts();
 loadWanderLocation();
 setInterval(updateWanderDetails, 30000);
 
+function renderBuildStamp() {
+  const stamp = document.querySelector("#build-stamp");
+  if (!stamp) return;
 
-function formatBuildStampTime(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "unknown";
-  return new Intl.DateTimeFormat("en-US", {
+  const date = new Date(stamp.dataset.buildUtc);
+
+  if (Number.isNaN(date.getTime())) {
+    stamp.textContent = "v18";
+    return;
+  }
+
+  const formatted = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -228,18 +259,8 @@ function formatBuildStampTime(value) {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
+
+  stamp.textContent = `v18 · published ${formatted}`;
 }
 
-function updateBuildStamp() {
-  const stamp = document.querySelector("#build-stamp");
-  const servedEl = document.querySelector("[data-served-time]");
-  if (!stamp || !servedEl) return;
-
-  const buildUtc = stamp.dataset.buildUtc;
-  const servedValue = document.lastModified;
-
-  stamp.textContent =
-    `v12 · built ${formatBuildStampTime(buildUtc)} · served ${formatBuildStampTime(servedValue)}`;
-}
-
-updateBuildStamp();
+renderBuildStamp();

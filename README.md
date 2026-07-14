@@ -135,3 +135,13 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Shortcut may still send coordinates, but they remain private in KV.
 - Included `worker-v17.js`.
 - `MAPBOX_TOKEN` is no longer needed and can be removed from Cloudflare.
+
+
+## v18
+
+- Fixed the JavaScript syntax error that disabled Currently Wandering.
+- Added reliable dialog open, close, and backdrop-click behavior.
+- Replaced the stale v12 stamp with a clean v18 publish timestamp.
+- Removed the permanently stuck `served checking...` text.
+- Build timestamp: 2026-07-14T06:08:43Z
+- Worker logic is unchanged from v17.
