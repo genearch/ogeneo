@@ -5,11 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Ogeneo, Gene's visual travel journal.">
   <meta name="theme-color" content="#0b090b">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ogeneo">
   <title>Ogeneo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,650&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=29">
+  <link rel="stylesheet" href="css/site.css?v=30">
 </head>
 <body>
   <header class="site-header">
@@ -49,6 +56,24 @@
         <div class="gold-rule"></div>
         <p class="hero-note">Stone walls. Long walks. Excellent tea.</p>
       </div>
+    </section>
+
+
+    <section class="wander-inline" aria-labelledby="wander-inline-title">
+      <button class="wander-inline-card" id="wander-inline-card" type="button" aria-haspopup="dialog" aria-controls="wander-dialog">
+        <img data-inline-wander-photo src="assets/locations/ventura-pier.jpg" alt="">
+        <span class="wander-inline-shade"></span>
+        <span class="wander-inline-copy">
+          <span class="wander-inline-kicker">Currently wandering</span>
+          <strong id="wander-inline-title" data-inline-wander-location>Somewhere worth finding</strong>
+          <span class="wander-inline-note" data-inline-wander-note>Preparing to wander.</span>
+        </span>
+        <span class="wander-inline-weather">
+          <span data-inline-weather-icon>🌤️</span>
+          <strong data-inline-weather-temp>Weather loading</strong>
+        </span>
+        <span class="wander-inline-arrow" aria-hidden="true">↗</span>
+      </button>
     </section>
 
     <section class="mosaic-shell" id="journal">
@@ -191,9 +216,9 @@
     </div>
   </dialog>
 
-  <script src="js/site.js?v=29" defer></script>
+  <script src="js/site.js?v=30" defer></script>
 
-  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T19:05:00Z">v29 · published 2026-07-14T19:05:00Z</div>
+  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T19:35:00Z">v30 · published 2026-07-14T19:35:00Z</div>
 
 </body>
 </html>

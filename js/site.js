@@ -2,6 +2,7 @@ const mosaic = document.querySelector("#mosaic");
 const dialog = document.querySelector("#story-dialog");
 const wanderDialog = document.querySelector("#wander-dialog");
 const wanderTrigger = document.querySelector("#wander-trigger");
+const wanderInlineCard = document.querySelector("#wander-inline-card");
 
 const LOCATION_API =
   "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
@@ -178,6 +179,23 @@ function updateWanderDetails() {
     photo.src = locationImageFor(location);
   }
 
+
+  setText("[data-inline-wander-location]", formatLocation(location));
+  setText("[data-inline-wander-note]",
+    location.note || "Somewhere between here and there.");
+  setText("[data-inline-weather-icon]", weather.icon || "🌤️");
+  setText(
+    "[data-inline-weather-temp]",
+    Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC)
+      ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
+      : "Weather unavailable"
+  );
+
+  const inlinePhoto = document.querySelector("[data-inline-wander-photo]");
+  if (inlinePhoto) {
+    inlinePhoto.src = locationImageFor(location);
+  }
+
   setText("[data-api-status]", "API healthy ●");
   renderWorldTimes();
   renderRecentStops();
@@ -201,15 +219,18 @@ async function loadWanderLocation() {
   updateWanderDetails();
 }
 
-if (wanderTrigger && wanderDialog) {
-  wanderTrigger.addEventListener("click", async () => {
-    await loadWanderLocation();
-    if (typeof wanderDialog.showModal === "function") {
-      wanderDialog.showModal();
-    } else {
-      wanderDialog.setAttribute("open", "");
-    }
-  });
+async function openWanderDialog() {
+  await loadWanderLocation();
+  if (typeof wanderDialog.showModal === "function") {
+    wanderDialog.showModal();
+  } else {
+    wanderDialog.setAttribute("open", "");
+  }
+}
+
+if (wanderDialog) {
+  wanderTrigger?.addEventListener("click", openWanderDialog);
+  wanderInlineCard?.addEventListener("click", openWanderDialog);
 
   wanderDialog.querySelector(".dialog-close")?.addEventListener("click", () => {
     if (typeof wanderDialog.close === "function") wanderDialog.close();
@@ -318,7 +339,7 @@ function renderBuildStamp() {
   if (!stamp) return;
   const date = new Date(stamp.dataset.buildUtc);
   if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v29";
+    stamp.textContent = "v30";
     return;
   }
   const formatted = new Intl.DateTimeFormat("en-US", {
@@ -331,6 +352,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-  stamp.textContent = `v29 · published ${formatted}`;
+  stamp.textContent = `v30 · published ${formatted}`;
 }
 renderBuildStamp();
