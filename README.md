@@ -69,3 +69,13 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Reduced visual clutter with muted saturation, lower brightness, and a soft vignette.
 - Added a small location caption inside the map card.
 - Preserved click-through to Google Maps.
+
+
+## v11
+
+- Reduced the size of the Currently Wandering panel.
+- Switched from an iframe to a true static OpenStreetMap image.
+- Kept the custom gold pin centered above the map.
+- Made the travel note more prominent.
+- Reduced the location headline and info-card sizes.
+- Added OpenStreetMap attribution and click-through.

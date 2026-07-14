@@ -91,10 +91,14 @@ function updateWanderDetails() {
 
   if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
     const query = `${latitude},${longitude}`;
-    const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=11&output=embed`;
-    const openUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    const staticMapUrl =
+      `https://staticmap.openstreetmap.de/staticmap.php?center=${latitude},${longitude}` +
+      `&zoom=11&size=900x560&maptype=mapnik`;
+    const openUrl =
+      `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}` +
+      `#map=11/${latitude}/${longitude}`;
 
-    if (mapEl && mapEl.src !== embedUrl) mapEl.src = embedUrl;
+    if (mapEl && mapEl.src !== staticMapUrl) mapEl.src = staticMapUrl;
     if (mapLinkEl) mapLinkEl.href = openUrl;
     if (mapLabelEl) {
       mapLabelEl.textContent = [location.city, location.region]
