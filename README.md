@@ -87,3 +87,12 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Shows version, package build time, and browser-reported server modified time to the second.
 - Hovering or highlighting reveals the text.
 - Package build timestamp: 2026-07-14T04:59:40Z
+
+
+## v13
+
+- Replaced the unreliable external static-map image service.
+- Uses OpenStreetMap's own embedded map endpoint.
+- Keeps the dark visual treatment and custom gold pin.
+- Preserves click-through to the full map.
+- Repositioned attribution and map caption to prevent overlap.

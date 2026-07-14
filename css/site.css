@@ -454,13 +454,13 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
   display:block;
   width:100%;
   height:100%;
-  object-fit:cover;
+  border:0;
   pointer-events:none;
   filter:
-    grayscale(.18)
-    saturate(.62)
-    contrast(1.16)
-    brightness(.54)
+    grayscale(.22)
+    saturate(.6)
+    contrast(1.12)
+    brightness(.58)
     sepia(.08)
 }
 .wander-map-wash{
@@ -500,7 +500,7 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
 .wander-map-caption{
   position:absolute;
   left:18px;
-  bottom:18px;
+  bottom:52px;
   max-width:68%;
   padding:13px 15px;
   border:1px solid rgba(255,255,255,.12);
@@ -527,7 +527,8 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
 .map-attribution{
   position:absolute;
   left:14px;
-  top:12px;
+  top:auto;
+  bottom:14px;
   color:rgba(255,255,255,.46);
   font-size:.52rem;
   letter-spacing:.04em;
