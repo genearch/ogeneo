@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,650&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=27">
+  <link rel="stylesheet" href="css/site.css?v=28">
 </head>
 <body>
   <header class="site-header">
@@ -191,59 +191,9 @@
     </div>
   </dialog>
 
-  <script src="js/site.js?v=27" defer></script>
+  <script src="js/site.js?v=28" defer></script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const trigger = document.getElementById('wander-trigger');
-      const dialog = document.getElementById('wander-dialog');
-
-      if (!trigger || !dialog) return;
-
-      trigger.addEventListener('click', function () {
-        if (dialog.open) return;
-
-        if (typeof dialog.showModal === 'function') {
-          dialog.showModal();
-        } else {
-          dialog.setAttribute('open', '');
-          dialog.classList.add('is-open');
-        }
-      });
-
-      dialog.querySelectorAll('.dialog-close').forEach(function (button) {
-        button.addEventListener('click', function () {
-          if (typeof dialog.close === 'function') {
-            dialog.close();
-          } else {
-            dialog.removeAttribute('open');
-            dialog.classList.remove('is-open');
-          }
-        });
-      });
-
-      dialog.addEventListener('click', function (event) {
-        const rect = dialog.getBoundingClientRect();
-        const clickedBackdrop =
-          event.clientX < rect.left ||
-          event.clientX > rect.right ||
-          event.clientY < rect.top ||
-          event.clientY > rect.bottom;
-
-        if (clickedBackdrop) {
-          if (typeof dialog.close === 'function') {
-            dialog.close();
-          } else {
-            dialog.removeAttribute('open');
-            dialog.classList.remove('is-open');
-          }
-        }
-      });
-    });
-  </script>
-
-
-  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T18:15:00Z">v27 · published 2026-07-14T18:15:00Z</div>
+  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T18:30:00Z">v28 · published 2026-07-14T18:30:00Z</div>
 
 </body>
 </html>

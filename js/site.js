@@ -119,21 +119,6 @@ function renderRecentStops() {
   const ribbon = document.querySelector("[data-recent-stops]");
   if (!ribbon) return;
 
-<<<<<<< HEAD
-  const tripsyLocations = [
-    { city: "Béziers", country: "France" },
-    { city: "London", country: "United Kingdom" },
-    { city: "Upton upon Severn", country: "United Kingdom" },
-    { city: "North Yorkshire", country: "England" }
-  ];
-
-  ribbon.innerHTML = tripsyLocations.map(stop => `
-    <div class="recent-stop recent-stop-location">
-      <strong>${countryFlags[stop.country] || "📍"} ${escapeHtml(stop.city)}</strong>
-    </div>
-  `).join("");
-}
-=======
   const stops = Array.isArray(currentWanderLocation.recentStops)
     ? currentWanderLocation.recentStops
     : [];
@@ -151,8 +136,6 @@ function renderRecentStops() {
     </div>
   `).join("");
 }
-
->>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3
 function updateWanderDetails() {
   const location = currentWanderLocation;
   const weather = location.weather || {};
@@ -325,8 +308,6 @@ document.querySelectorAll(".mobile-tabbar a").forEach(link => {
 });
 
 loadPosts();
-
-loadPosts();
 loadWanderLocation();
 setInterval(() => {
   updateWanderDetails();
@@ -337,11 +318,7 @@ function renderBuildStamp() {
   if (!stamp) return;
   const date = new Date(stamp.dataset.buildUtc);
   if (Number.isNaN(date.getTime())) {
-<<<<<<< HEAD
-    stamp.textContent = "v25";
-=======
-    stamp.textContent = "v24";
->>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3
+    stamp.textContent = "v28";
     return;
   }
   const formatted = new Intl.DateTimeFormat("en-US", {
@@ -354,10 +331,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-<<<<<<< HEAD
-  stamp.textContent = `v25 · published ${formatted}`;
-=======
-  stamp.textContent = `v24 · published ${formatted}`;
->>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3
+  stamp.textContent = `v28 · published ${formatted}`;
 }
 renderBuildStamp();
