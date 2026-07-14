@@ -106,3 +106,14 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Removed the duplicate decorative pin.
 - Included `worker-v14.js` with corrected public GET CORS behavior.
 - Added `ogeneo.pages.dev` to the allowed site origins.
+
+
+## v15
+
+- Redesigned the Currently Wandering panel as a compact travel postcard.
+- Made the note the visual focus.
+- Reduced the map to a smaller accent card.
+- Removed the Mapbox token from all website files.
+- Added a Worker `/api/map` proxy so the token stays in Cloudflare.
+- Included `worker-v15.js`.
+- Requires a Cloudflare Worker secret named `MAPBOX_TOKEN`.

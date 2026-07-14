@@ -105,14 +105,29 @@
       <span>Currently wandering</span>
     </div>
 
-    <div class="wander-top">
+    <div class="wander-postcard">
       <div class="wander-copy">
-        <h2 data-wander-location>Somewhere worth finding</h2>
         <p class="wander-country" data-wander-country>Checking the map...</p>
-        <div class="wander-rule" aria-hidden="true"><span>✦</span></div>
+        <h2 data-wander-location>Somewhere worth finding</h2>
+
         <blockquote class="wander-note" data-wander-note>
           Checking the map...
         </blockquote>
+
+        <div class="wander-details">
+          <div>
+            <span>Local time</span>
+            <strong data-wander-time>Loading...</strong>
+          </div>
+          <div>
+            <span>Local date</span>
+            <strong data-wander-date>Loading...</strong>
+          </div>
+          <div>
+            <span>Last update</span>
+            <strong data-wander-updated>Loading...</strong>
+          </div>
+        </div>
       </div>
 
       <a class="wander-map-link" data-wander-map-link href="#" target="_blank" rel="noopener">
@@ -122,31 +137,13 @@
           alt="Map of the current location"
           loading="lazy"
         >
-
         <div class="wander-map-wash" aria-hidden="true"></div>
-<div class="wander-map-caption">
-          <span class="wander-map-eyebrow">Current coordinates</span>
+        <div class="wander-map-caption">
+          <span>Waypoint</span>
           <strong data-wander-map-label>Somewhere on the map</strong>
         </div>
-
-        <span class="map-attribution">Mapbox</span>
         <span class="map-open-label">Open map</span>
       </a>
-    </div>
-
-    <div class="wander-details">
-      <div>
-        <span>Local time</span>
-        <strong data-wander-time>Loading...</strong>
-      </div>
-      <div>
-        <span>Local date</span>
-        <strong data-wander-date>Loading...</strong>
-      </div>
-      <div>
-        <span>Last update</span>
-        <strong data-wander-updated>Loading...</strong>
-      </div>
     </div>
 
     <div class="wander-footer">

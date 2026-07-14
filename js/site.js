@@ -91,15 +91,13 @@ function updateWanderDetails() {
 
   if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
     const query = `${latitude},${longitude}`;
-    const mapboxToken = "pk.eyJ1Ijoib2dlbmVvIiwiYSI6ImNtcms3NXNmMzBhZ2kyd29henVjeWxqeGEifQ.dnGJMuWrCLHi22pbOj2Nsw";
-    const marker = `pin-l+e0b44f(${longitude},${latitude})`;
-    const staticMapUrl =
-      `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${marker}/` +
-      `${longitude},${latitude},10.8,0/900x560@2x?access_token=${mapboxToken}`;
+    const mapImageUrl =
+      `${LOCATION_API.replace("/api/location", "/api/map")}` +
+      `?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`;
     const openUrl =
       `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 
-    if (mapEl && mapEl.src !== staticMapUrl) mapEl.src = staticMapUrl;
+    if (mapEl && mapEl.src !== mapImageUrl) mapEl.src = mapImageUrl;
     if (mapLinkEl) mapLinkEl.href = openUrl;
     if (mapLabelEl) {
       mapLabelEl.textContent = [location.city, location.region]
