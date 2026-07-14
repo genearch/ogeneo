@@ -96,3 +96,13 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Keeps the dark visual treatment and custom gold pin.
 - Preserves click-through to the full map.
 - Repositioned attribution and map caption to prevent overlap.
+
+
+## v14
+
+- Replaced the failed free-map embeds with Mapbox Static Images.
+- Uses the Mapbox dark style and a red location pin.
+- Opens Google Maps when the map card is clicked.
+- Removed the duplicate decorative pin.
+- Included `worker-v14.js` with corrected public GET CORS behavior.
+- Added `ogeneo.pages.dev` to the allowed site origins.

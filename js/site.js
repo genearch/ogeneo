@@ -91,22 +91,15 @@ function updateWanderDetails() {
 
   if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
     const query = `${latitude},${longitude}`;
-    const latSpan = 0.16;
-    const lonSpan = 0.22;
-    const left = longitude - lonSpan;
-    const bottom = latitude - latSpan;
-    const right = longitude + lonSpan;
-    const top = latitude + latSpan;
-
-    const bbox = [left, bottom, right, top].join(",");
-    const embedUrl =
-      `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}` +
-      `&layer=mapnik&marker=${encodeURIComponent(`${latitude},${longitude}`)}`;
+    const mapboxToken = "pk.eyJ1Ijoib2dlbmVvIiwiYSI6ImNtcms3NXNmMzBhZ2kyd29henVjeWxqeGEifQ.dnGJMuWrCLHi22pbOj2Nsw";
+    const marker = `pin-l+e0b44f(${longitude},${latitude})`;
+    const staticMapUrl =
+      `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${marker}/` +
+      `${longitude},${latitude},10.8,0/900x560@2x?access_token=${mapboxToken}`;
     const openUrl =
-      `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}` +
-      `#map=11/${latitude}/${longitude}`;
+      `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 
-    if (mapEl && mapEl.src !== embedUrl) mapEl.src = embedUrl;
+    if (mapEl && mapEl.src !== staticMapUrl) mapEl.src = staticMapUrl;
     if (mapLinkEl) mapLinkEl.href = openUrl;
     if (mapLabelEl) {
       mapLabelEl.textContent = [location.city, location.region]
