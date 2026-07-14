@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,650&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/site.css?v=25">
 </head>
 <body>
   <header class="site-header">
@@ -33,14 +33,10 @@
       <a href="#about">About</a>
     </nav>
 
-    <div class="header-location">
-      <span class="pin">●</span>
-      <span>
-        <strong>Currently wandering</strong>
-        <small>North Yorkshire, England</small>
-      </span>
-      <time data-local-time>11:42 AM</time>
-    </div>
+    <button class="wander-trigger" id="wander-trigger" type="button" aria-haspopup="dialog" aria-controls="wander-dialog">
+      <span class="wander-pin" aria-hidden="true">📍</span>
+      <span>Currently wandering</span>
+    </button>
   </header>
 
   <main id="top">
@@ -48,10 +44,10 @@
       <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88" alt="Rolling green hills in North Yorkshire">
       <div class="hero-shade"></div>
       <div class="hero-copy">
-        <p class="eyebrow">📍 Currently wandering</p>
-        <h1>North Yorkshire,<br>England</h1>
+        <p class="eyebrow">A visual travel journal</p>
+        <h1>Places worth<br>remembering.</h1>
         <div class="gold-rule"></div>
-        <p class="hero-time">◷ <span data-local-time>11:42 AM</span><br><small>JUL 13, 2026</small></p>
+        <p class="hero-note">Stone walls. Long walks. Excellent tea.</p>
       </div>
     </section>
 
@@ -101,6 +97,90 @@
     <a href="#about"><span>○</span>About</a>
   </nav>
 
+  <dialog class="wander-dialog wander-editorial" id="wander-dialog">
+    <button class="dialog-close" type="button" aria-label="Close">×</button>
+
+    <figure class="wander-hero">
+      <img
+        data-wander-photo
+        src="assets/locations/camarillo-vineyard-sunset.jpg"
+        alt="Landscape near the current location"
+      >
+      <div class="wander-hero-shade"></div>
+
+      <div class="wander-hero-top">
+        <div class="wander-badge">
+          <span aria-hidden="true">📍</span>
+          <span>Currently wandering</span>
+        </div>
+
+        <div class="wander-weather">
+          <span data-weather-icon>🌤️</span>
+          <strong data-weather-temp>Weather loading</strong>
+          <small data-weather-condition></small>
+        </div>
+      </div>
+
+      <figcaption class="wander-place">
+        <p>
+          <span data-wander-flag>🌍</span>
+          <span data-wander-country>Checking location...</span>
+        </p>
+        <h2 data-wander-location>Somewhere worth finding</h2>
+      </figcaption>
+    </figure>
+
+    <section class="wander-flow">
+      <article class="wander-journal">
+        <span>Today's journal</span>
+        <blockquote data-wander-note>Checking the travel journal...</blockquote>
+        <footer>Gene</footer>
+      </article>
+
+      <div class="wander-facts">
+        <div>
+          <span>Local time</span>
+          <strong data-wander-time>Loading...</strong>
+        </div>
+        <div>
+          <span>Updated</span>
+          <strong data-wander-updated>Loading...</strong>
+        </div>
+        <div>
+          <span>Current journey</span>
+          <strong data-journey-title>Checking...</strong>
+          <small data-journey-day></small>
+        </div>
+      </div>
+
+      <section class="world-time-panel">
+        <div class="panel-heading">
+          <span>🌐</span>
+          <strong>World time</strong>
+        </div>
+        <div class="world-time-ribbon" data-world-times></div>
+      </section>
+
+      <section class="recent-stops-panel">
+        <div class="panel-heading">
+          <span>✈</span>
+          <strong>Recent stops</strong>
+        </div>
+        <div class="recent-stops-ribbon" data-recent-stops>
+          <span class="empty-stop">The next chapter is loading...</span>
+        </div>
+      </section>
+
+      <footer class="wander-editorial-footer">
+        <div>
+          <em>Wherever I am, adventure continues.</em>
+          <small>Imagined by Gene • Crafted with ChatGPT</small>
+        </div>
+        <span data-api-status>API checking</span>
+      </footer>
+    </section>
+  </dialog>
+
   <dialog id="story-dialog">
     <button class="dialog-close" type="button" aria-label="Close">×</button>
     <div class="dialog-media"></div>
@@ -111,6 +191,9 @@
     </div>
   </dialog>
 
-  <script src="js/site.js" defer></script>
+  <script src="js/site.js?v=25" defer></script>
+
+  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T17:37:44Z">v25 · published 2026-07-14T17:37:44Z</div>
+
 </body>
 </html>
