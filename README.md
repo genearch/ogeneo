@@ -207,3 +207,27 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 
 - No update required.
 - No Worker file is included in this package.
+
+
+## v24
+
+### What's new
+
+- Compressed Currently Wandering into a smaller wallet-style popup.
+- Reduced desktop width and maximum height.
+- Reduced mobile height and protected the top safe area.
+- Reduced city typography so the location no longer crops.
+- Reduced hero, journal, facts, world-time, and recent-stop spacing.
+- Removed excess dead space while preserving readability.
+- Build timestamp: 2026-07-14T15:26:23Z
+
+### Files changed
+
+- `index.html`
+- `css/site.css`
+- `js/site.js`
+
+### Worker
+
+- No update required.
+- No Worker file is included.

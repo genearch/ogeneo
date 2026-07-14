@@ -321,7 +321,7 @@ function renderBuildStamp() {
   if (!stamp) return;
   const date = new Date(stamp.dataset.buildUtc);
   if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v23";
+    stamp.textContent = "v24";
     return;
   }
   const formatted = new Intl.DateTimeFormat("en-US", {
@@ -334,6 +334,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-  stamp.textContent = `v23 · published ${formatted}`;
+  stamp.textContent = `v24 · published ${formatted}`;
 }
 renderBuildStamp();
