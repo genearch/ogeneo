@@ -50,3 +50,22 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Loads the latest location, note, timezone, and update timestamp from the iPhone Shortcut.
 - Displays live local time and date for the published location.
 - Includes a graceful fallback if the location service is unavailable.
+
+
+## v9
+
+- Redesigned the Currently Wandering popup.
+- Smaller two-line location heading with country on its own line.
+- Added a live mini map using the published latitude and longitude.
+- Added a pushpin trigger and brighter text treatment.
+- Kept the travel note in one place only.
+- Added polished desktop and mobile layouts.
+
+
+## v10
+
+- Restyled the live map as a darker, quieter travel card.
+- Added a custom gold map pin layered above the live map.
+- Reduced visual clutter with muted saturation, lower brightness, and a soft vignette.
+- Added a small location caption inside the map card.
+- Preserved click-through to Google Maps.

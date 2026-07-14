@@ -34,7 +34,7 @@
     </nav>
 
     <button class="wander-trigger" type="button" aria-haspopup="dialog" aria-controls="wander-dialog">
-      <span class="wander-dot" aria-hidden="true"></span>
+      <span class="wander-pin" aria-hidden="true">📍</span>
       <span>Currently wandering</span>
     </button>
   </header>
@@ -99,9 +99,46 @@
 
   <dialog class="wander-dialog" id="wander-dialog">
     <button class="dialog-close" type="button" aria-label="Close">×</button>
-    <p class="section-kicker">Currently wandering</p>
-    <h2 data-wander-location>Somewhere worth finding</h2>
-    <p class="wander-note" data-wander-note>Checking the map...</p>
+
+    <div class="wander-badge">
+      <span aria-hidden="true">📍</span>
+      <span>Currently wandering</span>
+    </div>
+
+    <div class="wander-top">
+      <div class="wander-copy">
+        <h2 data-wander-location>Somewhere worth finding</h2>
+        <p class="wander-country" data-wander-country>Checking the map...</p>
+        <div class="wander-rule" aria-hidden="true"><span>✦</span></div>
+        <blockquote class="wander-note" data-wander-note>
+          Checking the map...
+        </blockquote>
+      </div>
+
+      <a class="wander-map-link" data-wander-map-link href="#" target="_blank" rel="noopener">
+        <iframe
+          class="wander-map"
+          data-wander-map
+          title="Current location map"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+
+        <div class="wander-map-wash" aria-hidden="true"></div>
+
+        <div class="wander-map-pin" aria-hidden="true">
+          <span></span>
+        </div>
+
+        <div class="wander-map-caption">
+          <span class="wander-map-eyebrow">Current coordinates</span>
+          <strong data-wander-map-label>Somewhere on the map</strong>
+        </div>
+
+        <span class="map-open-label">Open map</span>
+      </a>
+    </div>
+
     <div class="wander-details">
       <div>
         <span>Local time</span>
@@ -115,6 +152,11 @@
         <span>Last update</span>
         <strong data-wander-updated>Loading...</strong>
       </div>
+    </div>
+
+    <div class="wander-footer">
+      <span aria-hidden="true">🌐</span>
+      <em>Wherever I am, adventure continues.</em>
     </div>
   </dialog>
 

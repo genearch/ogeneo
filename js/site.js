@@ -16,7 +16,7 @@ let currentWanderLocation = {
 };
 
 function formatLocation(location) {
-  return [location.city, location.region, location.country]
+  return [location.city, location.region]
     .filter(Boolean)
     .join(", ");
 }
@@ -70,16 +70,38 @@ function updateWanderDetails() {
   }
 
   const locationEl = document.querySelector("[data-wander-location]");
+  const countryEl = document.querySelector("[data-wander-country]");
   const noteEl = document.querySelector("[data-wander-note]");
   const timeEl = document.querySelector("[data-wander-time]");
   const dateEl = document.querySelector("[data-wander-date]");
   const updatedEl = document.querySelector("[data-wander-updated]");
+  const mapEl = document.querySelector("[data-wander-map]");
+  const mapLinkEl = document.querySelector("[data-wander-map-link]");
+  const mapLabelEl = document.querySelector("[data-wander-map-label]");
 
   if (locationEl) locationEl.textContent = formatLocation(location);
+  if (countryEl) countryEl.textContent = location.country || "";
   if (noteEl) noteEl.textContent = location.note || "Somewhere between here and there.";
   if (timeEl) timeEl.textContent = time;
   if (dateEl) dateEl.textContent = date;
   if (updatedEl) updatedEl.textContent = formatUpdatedAt(location.updatedAt);
+
+  const latitude = Number(location.latitude);
+  const longitude = Number(location.longitude);
+
+  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+    const query = `${latitude},${longitude}`;
+    const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=11&output=embed`;
+    const openUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+
+    if (mapEl && mapEl.src !== embedUrl) mapEl.src = embedUrl;
+    if (mapLinkEl) mapLinkEl.href = openUrl;
+    if (mapLabelEl) {
+      mapLabelEl.textContent = [location.city, location.region]
+        .filter(Boolean)
+        .join(", ");
+    }
+  }
 }
 
 async function loadWanderLocation() {
