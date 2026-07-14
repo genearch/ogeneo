@@ -1343,7 +1343,6 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
     font-size:2.5rem;
   }
 }
-<<<<<<< HEAD
 
 
 /* v25 unified wallet-card and Tripsy location pills */
@@ -1398,5 +1397,215 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
     font-size:.84rem;
   }
 }
-=======
->>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3
+
+
+/* v29 compact mobile wallet refinement */
+@media(max-width:680px){
+  .wander-editorial{
+    width:calc(100% - 12px);
+    max-height:calc(100dvh - max(20px,env(safe-area-inset-top)) - 8px);
+    margin-top:max(10px,env(safe-area-inset-top));
+  }
+
+  .wander-editorial .dialog-close{
+    top:10px;
+    right:10px;
+    width:42px;
+    height:42px;
+    font-size:1.55rem;
+  }
+
+  .wander-hero{
+    min-height:238px;
+    max-height:238px;
+  }
+
+  .wander-hero-top{
+    padding:12px 60px 10px 12px;
+  }
+
+  .wander-badge{
+    max-width:calc(100% - 116px);
+    padding:7px 10px;
+    font-size:.54rem;
+  }
+
+  .wander-weather{
+    position:absolute;
+    top:10px;
+    right:62px;
+    bottom:auto;
+    min-width:0;
+    padding:7px 9px;
+    grid-template-columns:auto auto;
+    column-gap:6px;
+    border-radius:12px;
+  }
+
+  .wander-weather > span{
+    font-size:1.05rem;
+  }
+
+  .wander-weather strong{
+    font-size:.92rem;
+    white-space:nowrap;
+  }
+
+  .wander-weather small{
+    display:none;
+  }
+
+  .wander-place{
+    left:14px;
+    right:14px;
+    bottom:14px;
+  }
+
+  .wander-place p{
+    margin-bottom:4px;
+  }
+
+  .wander-place h2{
+    max-width:100%;
+    font-size:clamp(2.65rem,12vw,3.35rem);
+    line-height:.84;
+  }
+
+  .wander-flow{
+    padding:16px 16px 14px;
+  }
+
+  .wander-journal{
+    margin-top:0;
+    padding:0 0 14px 22px;
+  }
+
+  .wander-journal::after{
+    bottom:14px;
+  }
+
+  .wander-journal > span{
+    margin-bottom:7px;
+  }
+
+  .wander-journal blockquote{
+    font-size:clamp(1.22rem,5.2vw,1.5rem);
+    line-height:1.32;
+  }
+
+  .wander-journal footer{
+    margin-top:7px;
+  }
+
+  .wander-facts{
+    margin-top:0;
+    padding:10px 0;
+  }
+
+  .wander-facts div{
+    min-height:54px;
+    padding:0 10px;
+  }
+
+  .wander-facts div:last-child{
+    min-height:48px;
+    padding-top:10px;
+  }
+
+  .wander-facts span{
+    margin-bottom:4px;
+  }
+
+  .wander-facts strong{
+    font-size:.94rem;
+  }
+
+  .wander-facts small{
+    margin-top:2px;
+    font-size:.64rem;
+  }
+
+  .world-time-panel,
+  .recent-stops-panel{
+    margin-top:0;
+    padding:12px 0;
+  }
+
+  .panel-heading{
+    margin-bottom:9px;
+  }
+
+  .world-time-ribbon{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    overflow:visible;
+  }
+
+  .world-time-item{
+    min-width:0;
+    padding:0 8px;
+  }
+
+  .world-time-item span{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.61rem;
+  }
+
+  .world-time-item strong{
+    margin-top:3px;
+    font-size:.88rem;
+    white-space:nowrap;
+  }
+
+  .recent-stops-ribbon{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    overflow:visible;
+  }
+
+  .recent-stop{
+    min-width:0;
+    padding:9px 10px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    background:rgba(255,255,255,.022);
+  }
+
+  .recent-stop strong{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.88rem;
+  }
+
+  .recent-stop span{
+    margin-top:2px;
+    font-size:.61rem;
+  }
+
+  .wander-editorial-footer{
+    padding-top:10px;
+  }
+}
+
+@media(max-width:390px){
+  .wander-hero{
+    min-height:224px;
+    max-height:224px;
+  }
+
+  .wander-weather strong{
+    font-size:.84rem;
+  }
+
+  .world-time-item{
+    padding:0 6px;
+  }
+
+  .world-time-item strong{
+    font-size:.82rem;
+  }
+}

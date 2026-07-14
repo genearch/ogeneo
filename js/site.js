@@ -33,7 +33,8 @@ const countryFlags = {
 };
 
 const locationImages = {
-  "camarillo|california|united states": "assets/locations/camarillo-vineyard-sunset.jpg"
+  "camarillo|california|united states": "assets/locations/camarillo-vineyard-sunset.jpg",
+  "ventura|california|united states": "assets/locations/ventura-pier.jpg"
 };
 
 function locationImageFor(location) {
@@ -103,8 +104,7 @@ function renderWorldTimes() {
     },
     { label: "Los Angeles", zone: "America/Los_Angeles", icon: "🌴" },
     { label: "New York", zone: "America/New_York", icon: "🗽" },
-    { label: "London", zone: "Europe/London", icon: "🇬🇧" },
-    { label: "Paris", zone: "Europe/Paris", icon: "🇫🇷" }
+    { label: "London", zone: "Europe/London", icon: "🇬🇧" }
   ];
 
   ribbon.innerHTML = zones.map(item => `
@@ -318,7 +318,7 @@ function renderBuildStamp() {
   if (!stamp) return;
   const date = new Date(stamp.dataset.buildUtc);
   if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v28";
+    stamp.textContent = "v29";
     return;
   }
   const formatted = new Intl.DateTimeFormat("en-US", {
@@ -331,6 +331,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-  stamp.textContent = `v28 · published ${formatted}`;
+  stamp.textContent = `v29 · published ${formatted}`;
 }
 renderBuildStamp();
