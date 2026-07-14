@@ -1,5 +1,118 @@
 const mosaic = document.querySelector("#mosaic");
 const dialog = document.querySelector("#story-dialog");
+const wanderDialog = document.querySelector("#wander-dialog");
+const wanderTrigger = document.querySelector(".wander-trigger");
+
+const LOCATION_API =
+  "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
+
+let currentWanderLocation = {
+  city: "Camarillo",
+  region: "California",
+  country: "United States",
+  timezone: "America/Los_Angeles",
+  note: "Checking the map...",
+  updatedAt: null
+};
+
+function formatLocation(location) {
+  return [location.city, location.region, location.country]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function formatUpdatedAt(value) {
+  if (!value) return "Just now";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  }
+  if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  }
+
+  const days = Math.floor(seconds / 86400);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+function updateWanderDetails() {
+  const location = currentWanderLocation;
+  const timezone = location.timezone || "UTC";
+  const now = new Date();
+
+  let time = "Unknown";
+  let date = "Unknown";
+
+  try {
+    time = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      hour: "numeric",
+      minute: "2-digit"
+    }).format(now);
+
+    date = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    }).format(now);
+  } catch (error) {
+    console.warn("Invalid timezone from location API:", timezone);
+  }
+
+  const locationEl = document.querySelector("[data-wander-location]");
+  const noteEl = document.querySelector("[data-wander-note]");
+  const timeEl = document.querySelector("[data-wander-time]");
+  const dateEl = document.querySelector("[data-wander-date]");
+  const updatedEl = document.querySelector("[data-wander-updated]");
+
+  if (locationEl) locationEl.textContent = formatLocation(location);
+  if (noteEl) noteEl.textContent = location.note || "Somewhere between here and there.";
+  if (timeEl) timeEl.textContent = time;
+  if (dateEl) dateEl.textContent = date;
+  if (updatedEl) updatedEl.textContent = formatUpdatedAt(location.updatedAt);
+}
+
+async function loadWanderLocation() {
+  try {
+    const response = await fetch(LOCATION_API, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Location API returned ${response.status}`);
+
+    const location = await response.json();
+
+    currentWanderLocation = {
+      city: location.city || "",
+      region: location.region || "",
+      country: location.country || "",
+      timezone: location.timezone || "UTC",
+      latitude: Number(location.latitude),
+      longitude: Number(location.longitude),
+      note: location.note || "",
+      updatedAt: location.updatedAt || null
+    };
+  } catch (error) {
+    console.error("Could not load current location:", error);
+    currentWanderLocation.note = "The compass is temporarily taking a coffee break.";
+  }
+
+  updateWanderDetails();
+}
+
+if (wanderTrigger && wanderDialog) {
+  wanderTrigger.addEventListener("click", async () => {
+    await loadWanderLocation();
+    wanderDialog.showModal();
+  });
+}
 
 function escapeHtml(value = "") {
   return String(value)
@@ -67,7 +180,9 @@ function updateLocalTime() {
   document.querySelectorAll("[data-local-time]").forEach(el => el.textContent = formatted);
 }
 
-document.querySelector(".dialog-close").addEventListener("click", () => dialog.close());
+document.querySelectorAll(".dialog-close").forEach(button => {
+  button.addEventListener("click", () => button.closest("dialog").close());
+});
 
 document.querySelector(".menu-button").addEventListener("click", event => {
   const nav = document.querySelector("#site-nav");
@@ -82,6 +197,7 @@ document.querySelectorAll(".mobile-tabbar a").forEach(link => {
   });
 });
 
-updateLocalTime();
-setInterval(updateLocalTime, 30000);
 loadPosts();
+
+loadWanderLocation();
+setInterval(updateWanderDetails, 30000);

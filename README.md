@@ -36,3 +36,17 @@ v5: Updated PieCaken story for Yorkshire Thanksgiving.
 
 
 v6: Curated homepage (9 featured moments), 'Recently' heading.
+
+
+## v7
+
+- Removed the duplicate hero location block.
+- Added a subtle click-to-reveal current-location Easter egg.
+
+
+## v8
+
+- Connected the Currently Wandering Easter egg to the live Cloudflare Worker.
+- Loads the latest location, note, timezone, and update timestamp from the iPhone Shortcut.
+- Displays live local time and date for the published location.
+- Includes a graceful fallback if the location service is unavailable.

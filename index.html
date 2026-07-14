@@ -33,14 +33,10 @@
       <a href="#about">About</a>
     </nav>
 
-    <div class="header-location">
-      <span class="pin">●</span>
-      <span>
-        <strong>Currently wandering</strong>
-        <small>North Yorkshire, England</small>
-      </span>
-      <time data-local-time>11:42 AM</time>
-    </div>
+    <button class="wander-trigger" type="button" aria-haspopup="dialog" aria-controls="wander-dialog">
+      <span class="wander-dot" aria-hidden="true"></span>
+      <span>Currently wandering</span>
+    </button>
   </header>
 
   <main id="top">
@@ -48,10 +44,10 @@
       <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88" alt="Rolling green hills in North Yorkshire">
       <div class="hero-shade"></div>
       <div class="hero-copy">
-        <p class="eyebrow">📍 Currently wandering</p>
-        <h1>North Yorkshire,<br>England</h1>
+        <p class="eyebrow">A visual travel journal</p>
+        <h1>Places worth<br>remembering.</h1>
         <div class="gold-rule"></div>
-        <p class="hero-time">◷ <span data-local-time>11:42 AM</span><br><small>JUL 13, 2026</small></p>
+        <p class="hero-note">Stone walls. Long walks. Excellent tea.</p>
       </div>
     </section>
 
@@ -100,6 +96,27 @@
     <a href="#map"><span>◎</span>Map</a>
     <a href="#about"><span>○</span>About</a>
   </nav>
+
+  <dialog class="wander-dialog" id="wander-dialog">
+    <button class="dialog-close" type="button" aria-label="Close">×</button>
+    <p class="section-kicker">Currently wandering</p>
+    <h2 data-wander-location>Somewhere worth finding</h2>
+    <p class="wander-note" data-wander-note>Checking the map...</p>
+    <div class="wander-details">
+      <div>
+        <span>Local time</span>
+        <strong data-wander-time>Loading...</strong>
+      </div>
+      <div>
+        <span>Local date</span>
+        <strong data-wander-date>Loading...</strong>
+      </div>
+      <div>
+        <span>Last update</span>
+        <strong data-wander-updated>Loading...</strong>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="story-dialog">
     <button class="dialog-close" type="button" aria-label="Close">×</button>
