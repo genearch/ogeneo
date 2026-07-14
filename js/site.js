@@ -32,6 +32,20 @@ const countryFlags = {
   "Mexico": "🇲🇽"
 };
 
+const locationImages = {
+  "camarillo|california|united states": "assets/locations/camarillo-vineyard-sunset.jpg"
+};
+
+function locationImageFor(location) {
+  if (location.photoUrl) return location.photoUrl;
+
+  const key = [location.city, location.region, location.country]
+    .map(value => String(value || "").trim().toLowerCase())
+    .join("|");
+
+  return locationImages[key] || "assets/locations/travel-fallback.jpg";
+}
+
 function formatLocation(location) {
   return [location.city, location.region].filter(Boolean).join(", ");
 }
@@ -162,7 +176,7 @@ function updateWanderDetails() {
 
   const photo = document.querySelector("[data-wander-photo]");
   if (photo) {
-    photo.src = location.photoUrl || "assets/croatia-dalmatian-sunset.jpg";
+    photo.src = locationImageFor(location);
   }
 
   setText("[data-api-status]", "API healthy ●");
@@ -307,7 +321,7 @@ function renderBuildStamp() {
   if (!stamp) return;
   const date = new Date(stamp.dataset.buildUtc);
   if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v21";
+    stamp.textContent = "v22";
     return;
   }
   const formatted = new Intl.DateTimeFormat("en-US", {
@@ -320,6 +334,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-  stamp.textContent = `v21 · published ${formatted}`;
+  stamp.textContent = `v22 · published ${formatted}`;
 }
 renderBuildStamp();

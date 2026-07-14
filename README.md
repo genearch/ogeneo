@@ -170,3 +170,15 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Added: Imagined by Gene • Crafted with ChatGPT.
 - Worker behavior remains unchanged from v20.
 - Build timestamp: 2026-07-14T14:24:00Z
+
+
+## v22
+
+- Rebuilt Currently Wandering from scratch as one continuous editorial page.
+- Added the supplied Camarillo vineyard sunset as the home image.
+- Added cache-busting query strings to CSS and JavaScript.
+- Removed the old two-column dashboard/card layout.
+- Photo, location, journal, weather, journey, clocks, and recent stops now flow naturally.
+- Added a curated location-image resolver ready for more cities.
+- Worker logic is unchanged from v21.
+- Build timestamp: 2026-07-14T14:39:46Z
