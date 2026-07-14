@@ -145,3 +145,17 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Removed the permanently stuck `served checking...` text.
 - Build timestamp: 2026-07-14T06:08:43Z
 - Worker logic is unchanged from v17.
+
+
+## v20
+
+- Rebuilt Currently Wandering as Option A: Photo Journal.
+- Shortcut note appears as Today's Journal.
+- Weather is captured by the Worker at update time and shown in F and C.
+- Added live world times for the current location, Los Angeles, New York, London, and Paris.
+- Added automatic Home / On the Road journey state and day count.
+- Added recent stops, recorded when the city changes.
+- Public API still hides coordinates.
+- Photo URL is optional; a local travel image is used until photo upload arrives.
+- Included `worker-v20.js`.
+- Build timestamp: 2026-07-14T06:40:27Z

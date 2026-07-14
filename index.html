@@ -97,51 +97,88 @@
     <a href="#about"><span>○</span>About</a>
   </nav>
 
-  <dialog class="wander-dialog" id="wander-dialog">
+  <dialog class="wander-dialog wander-v20" id="wander-dialog">
     <button class="dialog-close" type="button" aria-label="Close">×</button>
 
-    <div class="wander-badge">
-      <span aria-hidden="true">📍</span>
-      <span>Currently wandering</span>
-    </div>
+    <div class="wander-v20-grid">
+      <section class="wander-v20-copy">
+        <div class="wander-badge">
+          <span aria-hidden="true">📍</span>
+          <span>Currently wandering</span>
+        </div>
 
-    <div class="wander-postcard">
-      <div class="wander-copy">
-        <p class="wander-country" data-wander-country>Checking the map...</p>
+        <p class="wander-country">
+          <span data-wander-flag>🌍</span>
+          <span data-wander-country>Checking location...</span>
+        </p>
+
         <h2 data-wander-location>Somewhere worth finding</h2>
 
-        <blockquote class="wander-note" data-wander-note>
-          Checking the map...
-        </blockquote>
+        <div class="wander-weather" data-weather-wrap>
+          <span data-weather-icon>◌</span>
+          <strong data-weather-temp>Weather loading</strong>
+          <span data-weather-condition></span>
+        </div>
 
-        <div class="wander-details">
+        <article class="wander-journal">
+          <span class="wander-journal-label">Today's journal</span>
+          <blockquote data-wander-note>Checking the travel journal...</blockquote>
+          <footer>Gene</footer>
+        </article>
+
+        <div class="wander-v20-meta">
           <div>
             <span>Local time</span>
             <strong data-wander-time>Loading...</strong>
           </div>
           <div>
-            <span>Local date</span>
-            <strong data-wander-date>Loading...</strong>
-          </div>
-          <div>
-            <span>Last update</span>
+            <span>Updated</span>
             <strong data-wander-updated>Loading...</strong>
           </div>
+          <div>
+            <span>Current journey</span>
+            <strong data-journey-title>Checking...</strong>
+            <small data-journey-day></small>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="wander-city-card">
-        <div class="wander-city-mark" aria-hidden="true">📍</div>
-        <span class="wander-city-eyebrow">Current waypoint</span>
-        <strong data-wander-card-location>Somewhere worth finding</strong>
-        <span data-wander-card-country>Checking the map...</span>
-      </div>
+      <figure class="wander-photo-card">
+        <img
+          data-wander-photo
+          src="assets/croatia-dalmatian-sunset.jpg"
+          alt="Current travel journal photograph"
+        >
+        <div class="wander-photo-shade"></div>
+        <figcaption>
+          <span data-photo-place>Current waypoint</span>
+          <strong data-photo-date>Today</strong>
+        </figcaption>
+      </figure>
     </div>
 
-    <div class="wander-footer">
-      <span aria-hidden="true">🌐</span>
+    <section class="world-time-panel">
+      <div class="panel-heading">
+        <span>🌐</span>
+        <strong>World time</strong>
+      </div>
+      <div class="world-time-ribbon" data-world-times></div>
+    </section>
+
+    <section class="recent-stops-panel">
+      <div class="panel-heading">
+        <span>✈</span>
+        <strong>Recent stops</strong>
+      </div>
+      <div class="recent-stops-ribbon" data-recent-stops>
+        <span class="empty-stop">The next chapter is loading...</span>
+      </div>
+    </section>
+
+    <footer class="wander-v20-footer">
       <em>Wherever I am, adventure continues.</em>
-    </div>
+      <span data-api-status>API checking</span>
+    </footer>
   </dialog>
 
   <dialog id="story-dialog">
@@ -156,8 +193,8 @@
 
   <script src="js/site.js" defer></script>
 
-  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T06:08:43Z">
-    v18 · published 2026-07-14T06:08:43Z
+  <div class="build-stamp" id="build-stamp" data-build-utc="2026-07-14T06:40:27Z">
+    v20 · published 2026-07-14T06:40:27Z
   </div>
 
 </body>

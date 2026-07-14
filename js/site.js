@@ -11,24 +11,36 @@ let currentWanderLocation = {
   region: "California",
   country: "United States",
   timezone: "America/Los_Angeles",
-  note: "Checking the map...",
-  updatedAt: null
+  note: "The next entry is waiting.",
+  updatedAt: null,
+  weather: null,
+  journey: null,
+  recentStops: [],
+  photoUrl: null
+};
+
+const countryFlags = {
+  "United States": "🇺🇸",
+  "United Kingdom": "🇬🇧",
+  "England": "🏴",
+  "France": "🇫🇷",
+  "Croatia": "🇭🇷",
+  "Italy": "🇮🇹",
+  "Spain": "🇪🇸",
+  "Germany": "🇩🇪",
+  "Canada": "🇨🇦",
+  "Mexico": "🇲🇽"
 };
 
 function formatLocation(location) {
-  return [location.city, location.region]
-    .filter(Boolean)
-    .join(", ");
+  return [location.city, location.region].filter(Boolean).join(", ");
 }
 
 function formatUpdatedAt(value) {
-  if (!value) return "Just now";
-
+  if (!value) return "Recently";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Recently";
-
   const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
-
   if (seconds < 60) return "Just now";
   if (seconds < 3600) {
     const minutes = Math.floor(seconds / 60);
@@ -38,90 +50,147 @@ function formatUpdatedAt(value) {
     const hours = Math.floor(seconds / 3600);
     return `${hours} hour${hours === 1 ? "" : "s"} ago`;
   }
-
   const days = Math.floor(seconds / 86400);
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-function updateWanderDetails() {
-  const location = currentWanderLocation;
-  const timezone = location.timezone || "UTC";
-  const now = new Date();
-
-  let time = "Unknown";
-  let date = "Unknown";
-
+function formatClock(timeZone) {
   try {
-    time = new Intl.DateTimeFormat("en-US", {
-      timeZone: timezone,
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone,
       hour: "numeric",
       minute: "2-digit"
-    }).format(now);
+    }).format(new Date());
+  } catch {
+    return "--:--";
+  }
+}
 
-    date = new Intl.DateTimeFormat("en-US", {
-      timeZone: timezone,
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric"
-    }).format(now);
-  } catch (error) {
-    console.warn("Invalid timezone from location API:", timezone);
+function formatPhotoDate(value) {
+  const date = value ? new Date(value) : new Date();
+  if (Number.isNaN(date.getTime())) return "Today";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function renderWorldTimes() {
+  const ribbon = document.querySelector("[data-world-times]");
+  if (!ribbon) return;
+
+  const zones = [
+    {
+      label: currentWanderLocation.city || "Here",
+      zone: currentWanderLocation.timezone || "UTC",
+      icon: "📍",
+      current: true
+    },
+    { label: "Los Angeles", zone: "America/Los_Angeles", icon: "🌴" },
+    { label: "New York", zone: "America/New_York", icon: "🗽" },
+    { label: "London", zone: "Europe/London", icon: "🇬🇧" },
+    { label: "Paris", zone: "Europe/Paris", icon: "🇫🇷" }
+  ];
+
+  ribbon.innerHTML = zones.map(item => `
+    <div class="world-time-item${item.current ? " current" : ""}">
+      <span>${item.icon} ${escapeHtml(item.label)}</span>
+      <strong>${formatClock(item.zone)}</strong>
+    </div>
+  `).join("");
+}
+
+function renderRecentStops() {
+  const ribbon = document.querySelector("[data-recent-stops]");
+  if (!ribbon) return;
+
+  const stops = Array.isArray(currentWanderLocation.recentStops)
+    ? currentWanderLocation.recentStops
+    : [];
+
+  if (!stops.length) {
+    ribbon.innerHTML =
+      '<span class="empty-stop">Your recent stops will appear after the next city change.</span>';
+    return;
   }
 
-  const locationEl = document.querySelector("[data-wander-location]");
-  const countryEl = document.querySelector("[data-wander-country]");
-  const noteEl = document.querySelector("[data-wander-note]");
-  const timeEl = document.querySelector("[data-wander-time]");
-  const dateEl = document.querySelector("[data-wander-date]");
-  const updatedEl = document.querySelector("[data-wander-updated]");
-  const cardLocationEl = document.querySelector("[data-wander-card-location]");
-  const cardCountryEl = document.querySelector("[data-wander-card-country]");
+  ribbon.innerHTML = stops.slice(0, 5).map(stop => `
+    <div class="recent-stop">
+      <strong>${countryFlags[stop.country] || "📍"} ${escapeHtml(stop.city || "Unknown")}</strong>
+      <span>${formatUpdatedAt(stop.updatedAt)}</span>
+    </div>
+  `).join("");
+}
 
-  if (locationEl) locationEl.textContent = formatLocation(location);
-  if (countryEl) countryEl.textContent = location.country || "";
-  if (noteEl) noteEl.textContent = location.note || "Somewhere between here and there.";
-  if (timeEl) timeEl.textContent = time;
-  if (dateEl) dateEl.textContent = date;
-  if (updatedEl) updatedEl.textContent = formatUpdatedAt(location.updatedAt);
+function updateWanderDetails() {
+  const location = currentWanderLocation;
+  const weather = location.weather || {};
+  const journey = location.journey || {};
 
-  if (cardLocationEl) {
-    cardLocationEl.textContent = [location.city, location.region]
-      .filter(Boolean)
-      .join(", ");
+  const setText = (selector, value) => {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = value;
+  };
+
+  setText("[data-wander-flag]", countryFlags[location.country] || "🌍");
+  setText("[data-wander-country]", location.country || "");
+  setText("[data-wander-location]", formatLocation(location));
+  setText("[data-wander-note]",
+    location.note || "Somewhere between here and there.");
+  setText("[data-wander-time]", formatClock(location.timezone || "UTC"));
+  setText("[data-wander-updated]", formatUpdatedAt(location.updatedAt));
+
+  setText("[data-weather-icon]", weather.icon || "🌤️");
+  setText(
+    "[data-weather-temp]",
+    Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC)
+      ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
+      : "Weather unavailable"
+  );
+  setText("[data-weather-condition]", weather.condition || "");
+
+  setText("[data-journey-title]",
+    journey.status === "away" ? (journey.title || "On the road") : "Home");
+  setText("[data-journey-day]",
+    journey.status === "away"
+      ? `Day ${journey.day || 1}`
+      : "Between adventures");
+
+  setText("[data-photo-place]", formatLocation(location));
+  setText("[data-photo-date]", formatPhotoDate(location.updatedAt));
+
+  const photo = document.querySelector("[data-wander-photo]");
+  if (photo) {
+    photo.src = location.photoUrl || "assets/croatia-dalmatian-sunset.jpg";
   }
-  if (cardCountryEl) {
-    cardCountryEl.textContent = location.country || "";
-  }
+
+  setText("[data-api-status]", "API healthy ●");
+  renderWorldTimes();
+  renderRecentStops();
 }
 
 async function loadWanderLocation() {
   try {
     const response = await fetch(LOCATION_API, { cache: "no-store" });
     if (!response.ok) throw new Error(`Location API returned ${response.status}`);
-
-    const location = await response.json();
-
     currentWanderLocation = {
-      city: location.city || "",
-      region: location.region || "",
-      country: location.country || "",
-      timezone: location.timezone || "UTC",
-      note: location.note || "",
-      updatedAt: location.updatedAt || null
+      ...currentWanderLocation,
+      ...(await response.json())
     };
   } catch (error) {
     console.error("Could not load current location:", error);
-    currentWanderLocation.note = "The compass is temporarily taking a coffee break.";
+    currentWanderLocation.note =
+      "The compass is temporarily taking a coffee break.";
+    const status = document.querySelector("[data-api-status]");
+    if (status) status.textContent = "API unavailable";
   }
-
   updateWanderDetails();
 }
 
 if (wanderTrigger && wanderDialog) {
   wanderTrigger.addEventListener("click", async () => {
     await loadWanderLocation();
-
     if (typeof wanderDialog.showModal === "function") {
       wanderDialog.showModal();
     } else {
@@ -129,26 +198,18 @@ if (wanderTrigger && wanderDialog) {
     }
   });
 
-  const wanderClose = wanderDialog.querySelector(".dialog-close");
-
-  wanderClose?.addEventListener("click", () => {
-    if (typeof wanderDialog.close === "function") {
-      wanderDialog.close();
-    } else {
-      wanderDialog.removeAttribute("open");
-    }
+  wanderDialog.querySelector(".dialog-close")?.addEventListener("click", () => {
+    if (typeof wanderDialog.close === "function") wanderDialog.close();
+    else wanderDialog.removeAttribute("open");
   });
 
   wanderDialog.addEventListener("click", event => {
     if (event.target !== wanderDialog) return;
-
-    if (typeof wanderDialog.close === "function") {
-      wanderDialog.close();
-    } else {
-      wanderDialog.removeAttribute("open");
-    }
+    if (typeof wanderDialog.close === "function") wanderDialog.close();
+    else wanderDialog.removeAttribute("open");
   });
 }
+
 
 function escapeHtml(value = "") {
   return String(value)
@@ -235,20 +296,20 @@ document.querySelectorAll(".mobile-tabbar a").forEach(link => {
 
 loadPosts();
 
+loadPosts();
 loadWanderLocation();
-setInterval(updateWanderDetails, 30000);
+setInterval(() => {
+  updateWanderDetails();
+}, 30000);
 
 function renderBuildStamp() {
   const stamp = document.querySelector("#build-stamp");
   if (!stamp) return;
-
   const date = new Date(stamp.dataset.buildUtc);
-
   if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v18";
+    stamp.textContent = "v20";
     return;
   }
-
   const formatted = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "2-digit",
@@ -259,8 +320,6 @@ function renderBuildStamp() {
     hour12: true,
     timeZoneName: "short"
   }).format(date);
-
-  stamp.textContent = `v18 · published ${formatted}`;
+  stamp.textContent = `v20 · published ${formatted}`;
 }
-
 renderBuildStamp();
