@@ -227,3 +227,33 @@ loadPosts();
 
 loadWanderLocation();
 setInterval(updateWanderDetails, 30000);
+
+
+function formatBuildStampTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "unknown";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZoneName: "short"
+  }).format(date);
+}
+
+function updateBuildStamp() {
+  const stamp = document.querySelector("#build-stamp");
+  const servedEl = document.querySelector("[data-served-time]");
+  if (!stamp || !servedEl) return;
+
+  const buildUtc = stamp.dataset.buildUtc;
+  const servedValue = document.lastModified;
+
+  stamp.textContent =
+    `v12 · built ${formatBuildStampTime(buildUtc)} · served ${formatBuildStampTime(servedValue)}`;
+}
+
+updateBuildStamp();

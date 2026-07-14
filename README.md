@@ -79,3 +79,11 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Made the travel note more prominent.
 - Reduced the location headline and info-card sizes.
 - Added OpenStreetMap attribution and click-through.
+
+
+## v12
+
+- Added a nearly invisible, selectable build stamp in the bottom-left corner.
+- Shows version, package build time, and browser-reported server modified time to the second.
+- Hovering or highlighting reveals the text.
+- Package build timestamp: 2026-07-14T04:59:40Z
