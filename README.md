@@ -117,3 +117,11 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Added a Worker `/api/map` proxy so the token stays in Cloudflare.
 - Included `worker-v15.js`.
 - Requires a Cloudflare Worker secret named `MAPBOX_TOKEN`.
+
+
+## v16
+
+- Fixed the Mapbox static-image request.
+- Changed 720x720@2x (1440x1440, over Mapbox's limit) to 600x600@2x (1200x1200).
+- Website layout is unchanged from v15.
+- Deploy `worker-v16.js` to Cloudflare.
