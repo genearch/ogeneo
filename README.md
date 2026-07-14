@@ -182,3 +182,28 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Added a curated location-image resolver ready for more cities.
 - Worker logic is unchanged from v21.
 - Build timestamp: 2026-07-14T14:39:46Z
+
+
+## v23
+
+### What's new
+
+- Reworked Currently Wandering into a true wallet-pass proportion.
+- Narrower desktop width for consistency with mobile.
+- Reduced hero height and city typography.
+- Improved desktop weather contrast and readability.
+- Added safer iOS top spacing so the pass no longer starts cropped.
+- Added a stronger gold vertical rule beside Today's Journal.
+- Preserved the Camarillo vineyard image and privacy-safe location behavior.
+- Build timestamp: 2026-07-14T15:14:22Z
+
+### Files changed
+
+- `index.html`
+- `css/site.css`
+- `js/site.js`
+
+### Worker
+
+- No update required.
+- No Worker file is included in this package.
