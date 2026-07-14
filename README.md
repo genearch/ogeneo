@@ -159,3 +159,14 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Photo URL is optional; a local travel image is used until photo upload arrives.
 - Included `worker-v20.js`.
 - Build timestamp: 2026-07-14T06:40:27Z
+
+
+## v21
+
+- Mobile-first typography and spacing pass.
+- Photo leads the experience on iPhone.
+- Larger location, journal, weather, metadata, world clocks, and recent stops.
+- Reduced nested-card styling in favor of a continuous editorial surface.
+- Added: Imagined by Gene • Crafted with ChatGPT.
+- Worker behavior remains unchanged from v20.
+- Build timestamp: 2026-07-14T14:24:00Z

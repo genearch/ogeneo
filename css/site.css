@@ -706,3 +706,173 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
     font-size:8px
   }
 }
+
+
+/* v21 mobile-first typography and editorial-surface pass */
+.wander-v20{
+  padding:30px;
+  border-radius:28px;
+}
+.wander-v20-grid{gap:30px}
+.wander-v20 h2{
+  font-size:clamp(4rem,7.4vw,7rem);
+  line-height:.84;
+  letter-spacing:-.05em;
+}
+.wander-country{font-size:.74rem;margin-top:30px}
+.wander-weather strong{font-size:1.34rem}
+.wander-weather [data-weather-condition]{font-size:.88rem}
+.wander-journal{
+  margin-top:34px;
+  padding:26px 0 26px 32px;
+  background:transparent;
+  border-radius:0;
+}
+.wander-journal-label{font-size:.66rem}
+.wander-journal blockquote{
+  font-size:clamp(1.55rem,2.7vw,2.15rem);
+  line-height:1.42;
+}
+.wander-v20-meta{
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.wander-v20-meta div{
+  min-height:96px;
+  padding:16px 18px;
+  border:0;
+  border-left:1px solid rgba(255,255,255,.08);
+  border-radius:0;
+  background:transparent;
+}
+.wander-v20-meta div:first-child{
+  border-left:0;
+  padding-left:0;
+}
+.wander-v20-meta strong{font-size:1.15rem}
+.wander-photo-card{
+  min-height:610px;
+  border:0;
+  border-radius:22px;
+}
+.wander-photo-card img{min-height:610px}
+.wander-photo-card figcaption{
+  left:22px;
+  right:22px;
+  bottom:20px;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+.wander-photo-card figcaption span{font-size:1.25rem}
+.world-time-panel,
+.recent-stops-panel{
+  margin-top:20px;
+  padding:20px 0 0;
+  border:0;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-radius:0;
+  background:transparent;
+}
+.world-time-item span{font-size:.76rem}
+.world-time-item strong{font-size:1.14rem}
+.recent-stop strong{font-size:1.02rem}
+.recent-stop span{font-size:.7rem}
+.wander-v20-footer{
+  align-items:end;
+  padding-top:15px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.wander-v20-footer small{
+  display:block;
+  margin-top:5px;
+  color:rgba(244,239,232,.28);
+  font-size:.62rem;
+}
+
+@media(max-width:680px){
+  .wander-v20{
+    width:calc(100% - 10px);
+    max-height:calc(100vh - 10px);
+    padding:18px 18px 22px;
+    border-radius:22px;
+  }
+  .wander-v20-grid{display:flex;flex-direction:column;gap:24px}
+  .wander-photo-card{
+    order:-1;
+    min-height:56vh;
+    max-height:520px;
+    border-radius:19px;
+  }
+  .wander-photo-card img{
+    min-height:56vh;
+    max-height:520px;
+  }
+  .wander-country{
+    margin-top:26px;
+    font-size:.78rem;
+  }
+  .wander-v20 h2{
+    font-size:clamp(4.25rem,19vw,6.25rem);
+    line-height:.82;
+  }
+  .wander-weather{margin-top:22px}
+  .wander-weather strong{font-size:1.42rem}
+  .wander-weather [data-weather-condition]{font-size:.9rem}
+  .wander-journal{
+    margin-top:30px;
+    padding:24px 0 24px 30px;
+  }
+  .wander-journal-label{font-size:.72rem}
+  .wander-journal blockquote{
+    font-size:clamp(1.75rem,7.2vw,2.2rem);
+    line-height:1.4;
+  }
+  .wander-v20-meta{
+    grid-template-columns:1fr 1fr;
+    padding-top:22px;
+  }
+  .wander-v20-meta div{
+    min-height:104px;
+    padding:17px 14px;
+  }
+  .wander-v20-meta div:nth-child(2){padding-right:0}
+  .wander-v20-meta div:last-child{
+    grid-column:1/-1;
+    border-left:0;
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:18px 0 0;
+    min-height:82px;
+  }
+  .wander-v20-meta span{font-size:.64rem}
+  .wander-v20-meta strong{font-size:1.28rem}
+  .wander-v20-meta small{font-size:.78rem}
+  .world-time-panel,
+  .recent-stops-panel{
+    margin-top:24px;
+    padding-top:22px;
+  }
+  .world-time-ribbon{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+  }
+  .world-time-item{
+    min-width:138px;
+    scroll-snap-align:start;
+  }
+  .world-time-item span{font-size:.82rem}
+  .world-time-item strong{font-size:1.35rem}
+  .recent-stop{min-width:160px}
+  .recent-stop strong{font-size:1.12rem}
+  .recent-stop span{font-size:.76rem}
+  .wander-v20-footer{display:block;font-size:.76rem}
+  .wander-v20-footer [data-api-status]{display:block;margin-top:10px}
+}
+@media(max-width:390px){
+  .wander-v20{padding-left:16px;padding-right:16px}
+  .wander-v20 h2{font-size:4rem}
+  .wander-photo-card,
+  .wander-photo-card img{min-height:48vh}
+}
