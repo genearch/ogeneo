@@ -1343,6 +1343,7 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
     font-size:2.5rem;
   }
 }
+<<<<<<< HEAD
 
 
 /* v25 unified wallet-card and Tripsy location pills */
@@ -1397,3 +1398,5 @@ dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
     font-size:.84rem;
   }
 }
+=======
+>>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3

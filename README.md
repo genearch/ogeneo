@@ -231,6 +231,7 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 
 - No update required.
 - No Worker file is included.
+<<<<<<< HEAD
 
 
 ## v25
@@ -258,3 +259,5 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 
 - No update required.
 - No Worker file is included.
+=======
+>>>>>>> 79767fa7d5dfd0d12ceb35bce2437d8c7fa987a3
