@@ -125,3 +125,13 @@ v6: Curated homepage (9 featured moments), 'Recently' heading.
 - Changed 720x720@2x (1440x1440, over Mapbox's limit) to 600x600@2x (1200x1200).
 - Website layout is unchanged from v15.
 - Deploy `worker-v16.js` to Cloudflare.
+
+
+## v17
+
+- Removed the live map and all map-service dependencies.
+- Replaced the map with a city-only travel postcard panel.
+- Public location API no longer exposes latitude or longitude.
+- Shortcut may still send coordinates, but they remain private in KV.
+- Included `worker-v17.js`.
+- `MAPBOX_TOKEN` is no longer needed and can be removed from Cloudflare.

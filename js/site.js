@@ -75,9 +75,8 @@ function updateWanderDetails() {
   const timeEl = document.querySelector("[data-wander-time]");
   const dateEl = document.querySelector("[data-wander-date]");
   const updatedEl = document.querySelector("[data-wander-updated]");
-  const mapEl = document.querySelector("[data-wander-map]");
-  const mapLinkEl = document.querySelector("[data-wander-map-link]");
-  const mapLabelEl = document.querySelector("[data-wander-map-label]");
+  const cardLocationEl = document.querySelector("[data-wander-card-location]");
+  const cardCountryEl = document.querySelector("[data-wander-card-country]");
 
   if (locationEl) locationEl.textContent = formatLocation(location);
   if (countryEl) countryEl.textContent = location.country || "";
@@ -86,24 +85,14 @@ function updateWanderDetails() {
   if (dateEl) dateEl.textContent = date;
   if (updatedEl) updatedEl.textContent = formatUpdatedAt(location.updatedAt);
 
-  const latitude = Number(location.latitude);
-  const longitude = Number(location.longitude);
-
-  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
-    const query = `${latitude},${longitude}`;
-    const mapImageUrl =
-      `${LOCATION_API.replace("/api/location", "/api/map")}` +
-      `?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`;
-    const openUrl =
-      `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-
-    if (mapEl && mapEl.src !== mapImageUrl) mapEl.src = mapImageUrl;
-    if (mapLinkEl) mapLinkEl.href = openUrl;
-    if (mapLabelEl) {
-      mapLabelEl.textContent = [location.city, location.region]
-        .filter(Boolean)
-        .join(", ");
-    }
+  if (cardLocationEl) {
+    cardLocationEl.textContent = [location.city, location.region]
+      .filter(Boolean)
+      .join(", ");
+  }
+  if (cardCountryEl) {
+    cardCountryEl.textContent = location.country || "";
+  }
   }
 }
 
@@ -119,8 +108,6 @@ async function loadWanderLocation() {
       region: location.region || "",
       country: location.country || "",
       timezone: location.timezone || "UTC",
-      latitude: Number(location.latitude),
-      longitude: Number(location.longitude),
       note: location.note || "",
       updatedAt: location.updatedAt || null
     };
