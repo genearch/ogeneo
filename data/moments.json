@@ -1,0 +1,19 @@
+[
+  {
+    "id": "ventura-pier-20260715",
+    "type": "photo",
+    "source": "iphone",
+    "title": "Ventura Pier",
+    "caption": "Home has a pretty good closing argument.",
+    "image": "assets/locations/ventura-pier.jpg",
+    "location": {
+      "city": "Ventura",
+      "region": "California",
+      "country": "United States",
+      "visibility": "city"
+    },
+    "capturedAt": "2026-07-15T20:43:50.613Z",
+    "featured": true,
+    "published": true
+  }
+]
