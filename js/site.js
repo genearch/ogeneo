@@ -54,6 +54,17 @@
     return `${Math.round(f)}°F / ${Math.round(c)}°C`;
   }
 
+  function weatherIcon(condition) {
+    const c = String(condition || "").toLowerCase();
+    if (/thunder|storm/.test(c)) return "⛈";
+    if (/snow/.test(c)) return "❄️";
+    if (/rain|drizzle|shower/.test(c)) return "🌧";
+    if (/fog|mist|haze/.test(c)) return "🌫";
+    if (/cloud|overcast/.test(c)) return "☁️";
+    if (/clear|sun/.test(c)) return "☀️";
+    return "🌤";
+  }
+
   function formatLocalTime(timeZone) {
     try {
       return new Intl.DateTimeFormat(undefined, { timeZone, weekday: "short", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(new Date());
@@ -107,14 +118,15 @@
     const loc = state.location;
     const temp = formatTemperature(loc.temperature);
     const time = formatLocalTime(loc.timezone);
+    const icon = weatherIcon(loc.condition);
     els.heroImage.style.backgroundImage = `url("${loc.image}")`;
     els.heroTitle.textContent = loc.city || loc.title;
     els.heroNote.textContent = loc.note;
-    els.heroLocation.textContent = loc.title;
-    els.heroCondition.textContent = [temp, loc.condition].filter(Boolean).join(" · ");
+    els.heroLocation.textContent = `📍 ${loc.title}`;
+    els.heroCondition.textContent = [icon, [temp, loc.condition].filter(Boolean).join(" · ")].filter(Boolean).join(" ");
     els.heroTime.textContent = time;
     els.sidePlace.textContent = loc.title;
-    els.sideWeather.textContent = [temp, loc.condition].filter(Boolean).join(" · ");
+    els.sideWeather.textContent = [icon, [temp, loc.condition].filter(Boolean).join(" · ")].filter(Boolean).join(" ");
     els.sideTime.textContent = time;
   }
 
@@ -179,17 +191,20 @@
       const media = `style="background-image:url('${esc(item.image)}')"`;
       if (item.type === "experience") {
         return `<article class="timeline-item" data-search="${esc([item.title,item.text,item.location].join(" ").toLowerCase())}">
-          <time class="timeline-date">${esc(d.day)}</time><span class="timeline-dot"></span>
           <div class="experience-card" ${media}>
-            <div class="experience-copy"><p class="eyebrow light">Experience</p><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p><p>${esc(item.count ? `${item.count} moments · ` : "")}${esc(item.location)}</p><span class="experience-link">Continue reading →</span></div>
+            <div class="experience-copy"><span class="eyebrow-rule"></span><p class="eyebrow light">Experience</p><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p><p>${esc(item.count ? `${item.count} moments · ` : "")}${esc(item.location)}</p><span class="experience-link">Continue reading →</span></div>
           </div></article>`;
       }
       return `<article class="timeline-item" data-search="${esc([item.title,item.text,item.location,item.source].join(" ").toLowerCase())}">
-        <time class="timeline-date">${esc(d.day)}</time><span class="timeline-dot"></span>
-        <div class="moment-card"><div class="moment-media" ${media} role="img" aria-label="${esc(item.title)}"></div>
-          <div class="moment-copy"><p class="eyebrow">Moment</p><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p>
-            <div class="moment-meta"><span>${esc(item.location)}</span><span>${esc(d.detail)}</span><span>${esc(item.source)}</span></div>
-          </div></div></article>`;
+        <div class="moment-row">
+          <span class="moment-row-dot"></span>
+          <div class="moment-row-thumb" ${media} role="img" aria-label="${esc(item.title)}"></div>
+          <div class="moment-row-body">
+            <p class="moment-row-title">${esc(item.title)}</p>
+            <div class="moment-row-meta"><span>${esc(item.location)}</span><span>${esc(item.source)}</span></div>
+          </div>
+          <time class="moment-row-time">${esc(d.day)}</time>
+        </div></article>`;
     }).join("");
   }
 
