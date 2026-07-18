@@ -3,121 +3,149 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Ogeneo, Gene's personal visual journal.">
-  <meta name="theme-color" content="#090b0d">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Ogeneo">
-  <title>Ogeneo</title>
+  <meta name="theme-color" content="#721f2f">
+  <meta name="description" content="OgeneO, a private-first visual journal of moments and experiences.">
+  <title>OgeneO</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=31">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Primary navigation">
-      <a class="wordmark" href="#top" aria-label="Ogeneo home">
-        <strong>OGENEO</strong>
-        <span>Remember your life.</span>
+      <a class="brand" href="#top" aria-label="OgeneO home">
+        <span class="brand-mark">O</span>
+        <span>
+          <strong>OgeneO</strong>
+          <small>Remember your life.</small>
+        </span>
       </a>
 
       <nav class="side-nav">
-        <a class="active" href="#top"><span>⌂</span>Home</a>
-        <a href="#moments"><span>▣</span>Moments</a>
-        <a href="#experiences"><span>▤</span>Experiences</a>
-        <a href="#collections"><span>◇</span>Collections</a>
-        <a href="#map"><span>⌖</span>Map</a>
-        <a href="#about"><span>♙</span>About Gene</a>
+        <a class="active" href="#top">Home</a>
+        <a href="#moments">Moments</a>
+        <a href="#experiences">Experiences</a>
+        <a href="#collections">Collections</a>
+        <a href="#map">Map</a>
+        <a href="#about">About Gene</a>
       </nav>
 
-      <section class="sidebar-wander" aria-label="Currently wandering">
-        <p>Currently wandering</p>
-        <strong data-wander-location>Somewhere worth finding</strong>
-        <span data-wander-note>The next entry is waiting.</span>
-        <span><b data-weather-icon>☀︎</b> <b data-weather-temp>Weather loading</b> <i data-weather-condition></i></span>
-        <span><b>◷</b> <b data-wander-time>--:--</b> <i data-wander-zone></i></span>
+      <section class="side-status" aria-labelledby="side-location-label">
+        <p id="side-location-label" class="eyebrow">Currently wandering</p>
+        <p class="side-place" id="side-place">Loading location…</p>
+        <p class="side-weather" id="side-weather">Checking the sky…</p>
+        <p class="side-time" id="side-time">Local time</p>
       </section>
-
-      <a class="profile-link" href="#about">
-        <img src="assets/gene-avatar.jpg" alt="Gene">
-        <span><strong>Gene</strong><small>View profile</small></span>
-      </a>
     </aside>
 
-    <main id="top" class="main-column">
-      <header class="mobile-header">
-        <button class="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
-        <a href="#top">OGENEO</a>
-        <img src="assets/gene-avatar.jpg" alt="Gene">
+    <div class="main-column">
+      <header class="topbar" id="top">
+        <button class="mobile-brand" type="button" aria-label="Open navigation" id="menu-button">
+          <span class="brand-mark small">O</span>
+          <span>OgeneO</span>
+        </button>
+
+        <div class="top-actions">
+          <button class="icon-button" type="button" aria-label="Search" id="search-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m1.35-5.65A7 7 0 1 1 4 11a7 7 0 0 1 14 0Z"/></svg>
+          </button>
+          <button class="avatar-button" type="button" aria-label="Profile" id="profile-button">
+            <span id="avatar-initials">GA</span>
+            <img id="avatar-image" alt="Gene" hidden>
+          </button>
+        </div>
       </header>
 
-      <div class="content-wrap">
-        <header class="page-intro">
-          <div>
-            <h1 data-greeting>Good morning.</h1>
-            <p>Here's what's on my mind today.</p>
-          </div>
-          <div class="header-actions">
-            <button type="button" aria-label="Search">⌕</button>
-            <button type="button" aria-label="Notifications">♢<span>2</span></button>
-            <img src="assets/gene-avatar.jpg" alt="Gene">
-          </div>
-        </header>
+      <main>
+        <section class="intro wrap">
+          <p class="date-line" id="today-label"></p>
+          <h1 id="greeting">Good morning.</h1>
+          <p>Here’s what’s happening in my little corner of the world.</p>
+        </section>
 
-        <section class="wander-card" id="currently-wandering">
-          <img data-wander-photo src="assets/locations/travel-fallback.jpg" alt="Current location">
-          <div class="wander-shade"></div>
-          <div class="wander-content">
-            <p>Currently wandering</p>
-            <h2><span>⌖</span> <span data-wander-location>Somewhere worth finding</span></h2>
-            <blockquote><span class="meta-glyph" aria-label="Captured with Meta glasses">⌁</span><span data-wander-note>The next entry is waiting.</span></blockquote>
-            <div class="wander-meta">
-              <span><b data-weather-icon>☀︎</b> <strong data-weather-temp>Weather loading</strong></span>
-              <span data-weather-condition></span>
-              <span><b>◷</b> <strong data-wander-time>--:--</strong> <i data-wander-zone></i></span>
-              <a href="#map">View on map</a>
+        <section class="hero wrap" aria-labelledby="hero-title">
+          <div class="hero-image" id="hero-image" role="img" aria-label="Current location"></div>
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="eyebrow light">Currently wandering</p>
+            <h2 id="hero-title">Somewhere worth remembering</h2>
+            <p class="hero-note" id="hero-note">A fresh page is loading.</p>
+            <div class="hero-meta">
+              <span id="hero-location">Finding the map pin…</span>
+              <span id="hero-condition">Reading the weather…</span>
+              <span id="hero-local-time">Finding local time…</span>
             </div>
           </div>
         </section>
 
-        <section class="journal-stream" id="moments" aria-live="polite">
-          <div class="stream-line" aria-hidden="true"></div>
-          <div id="journal-feed"></div>
-          <div class="feed-end">↓ &nbsp; Keep scrolling for more</div>
+        <section class="journal wrap" id="moments" aria-labelledby="journal-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Journal</p>
+              <h2 id="journal-title">Moments, in order</h2>
+            </div>
+            <button class="text-button" id="refresh-button" type="button">Refresh</button>
+          </div>
+
+          <div class="timeline" id="timeline" aria-live="polite">
+            <article class="loading-card">
+              <div class="skeleton image"></div>
+              <div class="skeleton line wide"></div>
+              <div class="skeleton line"></div>
+            </article>
+          </div>
         </section>
 
-        <section class="about-panel" id="about">
-          <p class="eyebrow">About</p>
-          <h2>A personal journal of moments worth remembering.</h2>
-          <p>Photos, observations, journeys, meals, places, and the occasional wrong turn that improved the day.</p>
+        <section class="empty-section wrap" id="experiences">
+          <p class="eyebrow">Experiences</p>
+          <h2>Stories discovered between the moments.</h2>
+          <p>When related moments begin to form a larger story, they will appear directly in the journal.</p>
         </section>
-      </div>
-    </main>
+
+        <section class="empty-section wrap" id="collections">
+          <p class="eyebrow">Collections</p>
+          <h2>Loose constellations of places, people, and ideas.</h2>
+        </section>
+
+        <section class="empty-section wrap" id="map">
+          <p class="eyebrow">Map</p>
+          <h2>Every pin has a story hiding beneath it.</h2>
+        </section>
+
+        <section class="about wrap" id="about">
+          <p class="eyebrow">About</p>
+          <h2>Designed to remember a life, not merely store pictures.</h2>
+          <p>OgeneO is Gene’s living visual journal, a place where photos, places, weather, notes and small observations become stories.</p>
+        </section>
+      </main>
+
+      <footer class="footer wrap">
+        <span>OgeneO V31.1</span>
+        <span id="build-stamp"></span>
+      </footer>
+    </div>
   </div>
 
-  <nav class="mobile-tabbar" aria-label="Primary">
-    <a class="active" href="#top"><span>⌂</span>Home</a>
-    <a href="#moments"><span>▣</span>Moments</a>
-    <a href="#experiences"><span>▤</span>Experiences</a>
-    <a href="#map"><span>⌖</span>Map</a>
-    <a href="#about"><span>♙</span>About</a>
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <a class="active" href="#top">Home</a>
+    <a href="#moments">Moments</a>
+    <a href="#experiences">Stories</a>
+    <a href="#map">Map</a>
   </nav>
 
-  <dialog id="story-dialog">
-    <button class="dialog-close" type="button" aria-label="Close">×</button>
-    <div class="dialog-media"></div>
-    <div class="dialog-copy">
-      <p class="dialog-meta"></p>
-      <h2 class="dialog-title"></h2>
-      <p class="dialog-caption"></p>
-    </div>
+  <dialog class="search-dialog" id="search-dialog">
+    <form method="dialog" class="search-box">
+      <div class="search-head">
+        <h2>Search the journal</h2>
+        <button class="icon-button" value="cancel" aria-label="Close search">×</button>
+      </div>
+      <input id="search-input" type="search" placeholder="Try a place, caption, or date" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </form>
   </dialog>
 
-  <script src="js/site.js?v=31" defer></script>
-  <div class="build-stamp">v31</div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/site.js" defer></script>
 </body>
 </html>

@@ -1,280 +1,234 @@
-const LOCATION_API = "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
+(() => {
+  "use strict";
 
-const FALLBACK_LOCATION = {
-  city: "Camarillo",
-  region: "California",
-  country: "United States",
-  timezone: "America/Los_Angeles",
-  note: "The next entry is waiting.",
-  updatedAt: null,
-  weather: null,
-  photoUrl: null
-};
-
-const fallbackFeed = [
-  {
-    type: "moment",
-    title: "Hot dogs... in a jar.",
-    caption: "Sometimes the little things make me smile.",
-    place: "Pépieux, France",
-    date: "Today",
-    time: "8:47 AM",
-    source: "meta",
-    image: "https://images.unsplash.com/photo-1585325701956-60dd9c8553bc?auto=format&fit=crop&w=800&q=85"
-  },
-  {
-    type: "moment",
-    title: "Bonjour isn't optional.",
-    caption: "A friendly reminder in case you forget.",
-    place: "Pépieux, France",
-    date: "Today",
-    time: "8:16 AM",
-    source: "meta",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=85"
-  },
-  {
-    type: "moment",
-    title: "Can't park there.",
-    caption: "I mean... technically they never said I couldn't.",
-    place: "Minerve, France",
-    date: "Today",
-    time: "7:52 AM",
-    source: "camera",
-    image: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=85"
-  },
-  {
-    type: "experience",
-    title: "Carcassonne Festival 2025",
-    caption: "A week of music, medieval streets, and unforgettable nights.",
-    date: "Jul 7 – Jul 13, 2025",
-    count: 24,
-    image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=1600&q=88"
-  },
-  {
-    type: "moment",
-    title: "Now this was worth the detour.",
-    caption: "Golden hour in Minerve.",
-    place: "Minerve, France",
-    date: "Yesterday",
-    time: "8:21 PM",
-    source: "meta",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=85"
-  },
-  {
-    type: "moment",
-    title: "Morning market before the crowds.",
-    caption: "Fresh figs, local cheese, and great people.",
-    place: "Pépieux, France",
-    date: "Yesterday",
-    time: "11:03 AM",
-    source: "meta",
-    image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=800&q=85"
-  },
-  {
-    type: "experience",
-    title: "Road Trip Through Provence",
-    caption: "Sunflowers, hill towns, lavender fields, and a car full of good ideas.",
-    date: "Jul 5 – Jul 12, 2025",
-    count: 42,
-    image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=88"
-  }
-];
-
-const dialog = document.querySelector("#story-dialog");
-let currentLocation = { ...FALLBACK_LOCATION };
-
-function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function setAll(selector, value) {
-  document.querySelectorAll(selector).forEach(el => {
-    el.textContent = value;
-  });
-}
-
-function formatLocation(location) {
-  return [location.city, location.region].filter(Boolean).join(", ") || location.country || "Somewhere worth finding";
-}
-
-function formatTime(timeZone) {
-  try {
-    return new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      hour: "numeric",
-      minute: "2-digit"
-    }).format(new Date());
-  } catch {
-    return "--:--";
-  }
-}
-
-function shortZone(timeZone) {
-  try {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      timeZoneName: "short"
-    }).formatToParts(new Date());
-    return parts.find(part => part.type === "timeZoneName")?.value || "";
-  } catch {
-    return "";
-  }
-}
-
-function updateGreeting() {
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning." : hour < 18 ? "Good afternoon." : "Good evening.";
-  setAll("[data-greeting]", greeting);
-}
-
-function renderLocation() {
-  const weather = currentLocation.weather || {};
-  const location = formatLocation(currentLocation);
-  const time = formatTime(currentLocation.timezone || "UTC");
-  const zone = shortZone(currentLocation.timezone || "UTC");
-  const hasTemps = Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC);
-  const temp = hasTemps
-    ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
-    : "Weather unavailable";
-
-  setAll("[data-wander-location]", location);
-  setAll("[data-wander-note]", currentLocation.note || "Somewhere between here and there.");
-  setAll("[data-wander-time]", time);
-  setAll("[data-wander-zone]", zone);
-  setAll("[data-weather-icon]", weather.icon || "☀︎");
-  setAll("[data-weather-temp]", temp);
-  setAll("[data-weather-condition]", weather.condition || "");
-
-  document.querySelectorAll("[data-wander-photo]").forEach(img => {
-    img.src = currentLocation.photoUrl || "assets/locations/travel-fallback.jpg";
-  });
-}
-
-async function loadLocation() {
-  try {
-    const response = await fetch(LOCATION_API, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Location API returned ${response.status}`);
-    currentLocation = { ...currentLocation, ...(await response.json()) };
-  } catch (error) {
-    console.warn("Using fallback location:", error);
-  }
-  renderLocation();
-}
-
-function normalizePost(post) {
-  if (post.type === "experience") return post;
-  return {
-    type: post.type === "quote" ? "moment" : "moment",
-    title: post.title || post.quote || "Untitled moment",
-    caption: post.caption || "",
-    place: post.place || post.location || post.kicker || "",
-    date: post.date || "Recently",
-    time: post.time || "",
-    source: post.source || "camera",
-    image: post.image || "assets/locations/travel-fallback.jpg"
+  const CONFIG = {
+    locationEndpoint: "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location",
+    momentsEndpoint: "data/posts.json",
+    fallbackHero: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85",
+    avatarUrl: "",
+    ownerInitials: "GA"
   };
-}
 
-async function loadFeed() {
-  let feed = fallbackFeed;
-  try {
-    const response = await fetch("data/posts.json", { cache: "no-store" });
-    if (response.ok) {
-      const posts = await response.json();
-      if (Array.isArray(posts) && posts.length) {
-        feed = posts.map(normalizePost);
-      }
-    }
-  } catch {
-    // The fallback feed keeps the page complete until the live data source is present.
+  const state = { moments: [], location: null };
+  const $ = (selector) => document.querySelector(selector);
+
+  const els = {
+    greeting: $("#greeting"), today: $("#today-label"), heroImage: $("#hero-image"),
+    heroTitle: $("#hero-title"), heroNote: $("#hero-note"), heroLocation: $("#hero-location"),
+    heroCondition: $("#hero-condition"), heroTime: $("#hero-local-time"), sidePlace: $("#side-place"),
+    sideWeather: $("#side-weather"), sideTime: $("#side-time"), timeline: $("#timeline"),
+    toast: $("#toast"), searchDialog: $("#search-dialog"), searchInput: $("#search-input"),
+    searchResults: $("#search-results"), sidebar: $(".sidebar")
+  };
+
+  function showToast(message) {
+    els.toast.textContent = message;
+    els.toast.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => els.toast.classList.remove("show"), 2400);
   }
-  renderFeed(feed);
-}
 
-function iconForSource(source) {
-  return source === "meta" ? '<span class="meta-glyph" title="Captured with Meta glasses">⌁</span>' : '<span class="camera-glyph" title="Camera">▣</span>';
-}
+  function setGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+    const word = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
+    els.greeting.textContent = `Good ${word}.`;
+    els.today.textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(now);
+  }
 
-function renderFeed(items) {
-  const feed = document.querySelector("#journal-feed");
-  feed.innerHTML = items.map((item, index) => {
-    if (item.type === "experience") {
-      return `
-        <article class="stream-item experience-row" id="${index === 3 ? "experiences" : ""}">
-          <div class="timeline-date"><strong>${escapeHtml(item.date || "")}</strong></div>
-          <button class="experience-card" type="button" data-index="${index}">
-            <img src="${escapeHtml(item.image)}" alt="" loading="lazy">
-            <span class="experience-shade"></span>
-            <span class="experience-copy">
-              <small>Experience</small>
-              <strong>${escapeHtml(item.title)}</strong>
-              <em>${escapeHtml(item.caption || "")}</em>
-              <span>${Number(item.count) || 0} moments <b>Open experience →</b></span>
-            </span>
-          </button>
-        </article>`;
+  function pick(obj, keys, fallback = "") {
+    for (const key of keys) {
+      const value = key.split(".").reduce((acc, part) => acc?.[part], obj);
+      if (value !== undefined && value !== null && value !== "") return value;
     }
+    return fallback;
+  }
 
-    return `
-      <article class="stream-item moment-row">
-        <div class="timeline-date"><strong>${escapeHtml(item.date || "")}</strong><span>${escapeHtml(item.time || "")}</span></div>
-        <button class="moment-card" type="button" data-index="${index}">
-          <img src="${escapeHtml(item.image)}" alt="" loading="lazy">
-          <span class="moment-copy">
-            <strong>${iconForSource(item.source)} ${escapeHtml(item.title)}</strong>
-            <em>${escapeHtml(item.caption || "")}</em>
-            <small>⌖ ${escapeHtml(item.place || "")}</small>
-          </span>
-          <span class="more">•••</span>
-        </button>
-      </article>`;
-  }).join("");
+  function formatTemperature(value) {
+    if (value === "" || value === null || value === undefined) return "";
+    const n = Number(value);
+    if (Number.isNaN(n)) return String(value);
+    const looksCelsius = n < 55;
+    const c = looksCelsius ? n : (n - 32) * 5 / 9;
+    const f = looksCelsius ? n * 9 / 5 + 32 : n;
+    return `${Math.round(f)}°F / ${Math.round(c)}°C`;
+  }
 
-  feed.querySelectorAll("[data-index]").forEach(button => {
-    button.addEventListener("click", () => openStory(items[Number(button.dataset.index)]));
-  });
-}
+  function formatLocalTime(timeZone) {
+    try {
+      return new Intl.DateTimeFormat(undefined, { timeZone, weekday: "short", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(new Date());
+    } catch {
+      return new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date());
+    }
+  }
 
-function openStory(item) {
-  if (!dialog) return;
-  dialog.querySelector(".dialog-media").innerHTML = `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">`;
-  dialog.querySelector(".dialog-meta").textContent = item.type === "experience" ? `${item.count || 0} moments · ${item.date || ""}` : `${item.place || ""} · ${item.date || ""}`;
-  dialog.querySelector(".dialog-title").textContent = item.title || "";
-  dialog.querySelector(".dialog-caption").textContent = item.caption || "";
-  dialog.showModal();
-}
+  async function fetchJSON(url, timeout = 9000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 
-function bindNavigation() {
-  const menu = document.querySelector(".mobile-menu");
-  const sidebar = document.querySelector(".sidebar");
-  menu?.addEventListener("click", () => {
-    const open = sidebar.classList.toggle("open");
-    menu.setAttribute("aria-expanded", String(open));
-  });
+  function normalizeLocation(payload) {
+    const root = payload?.data || payload || {};
+    const city = pick(root, ["city", "location.city", "place.city", "name"], "Somewhere interesting");
+    const region = pick(root, ["region", "state", "location.region", "place.region"], "");
+    const country = pick(root, ["country", "countryName", "location.country", "place.country"], "");
+    const title = [city, country].filter(Boolean).join(", ");
+    const temperature = pick(root, ["temperature", "temp", "weather.temperature", "weather.temp", "weather.current.temperature"], "");
+    const condition = pick(root, ["condition", "summary", "weather.condition", "weather.summary", "weather.current.condition"], "Weather unavailable");
+    const timezone = pick(root, ["timezone", "timeZone", "location.timezone", "place.timezone"], Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const image = pick(root, ["image", "imageUrl", "heroImage", "photo", "location.image"], CONFIG.fallbackHero);
+    const note = pick(root, ["note", "caption", "status", "headline", "location.note"], "Collecting the small details that make a place memorable.");
+    return { city, region, country, title, temperature, condition, timezone, image, note };
+  }
 
-  document.querySelectorAll(".side-nav a, .mobile-tabbar a").forEach(link => {
-    link.addEventListener("click", () => {
-      document.querySelectorAll(".side-nav a, .mobile-tabbar a").forEach(item => item.classList.remove("active"));
-      link.classList.add("active");
-      sidebar.classList.remove("open");
-      menu?.setAttribute("aria-expanded", "false");
+  async function loadLocation() {
+    try {
+      const payload = await fetchJSON(CONFIG.locationEndpoint);
+      state.location = normalizeLocation(payload);
+    } catch (error) {
+      console.warn("Location API unavailable:", error);
+      state.location = {
+        city: "Pépieux", country: "France", title: "Pépieux, France", temperature: "",
+        condition: "A quiet corner of the Minervois", timezone: "Europe/Paris",
+        image: CONFIG.fallbackHero, note: "A fresh page in the south of France."
+      };
+    }
+    renderLocation();
+  }
+
+  function renderLocation() {
+    const loc = state.location;
+    const temp = formatTemperature(loc.temperature);
+    const time = formatLocalTime(loc.timezone);
+    els.heroImage.style.backgroundImage = `url("${loc.image}")`;
+    els.heroTitle.textContent = loc.city || loc.title;
+    els.heroNote.textContent = loc.note;
+    els.heroLocation.textContent = loc.title;
+    els.heroCondition.textContent = [temp, loc.condition].filter(Boolean).join(" · ");
+    els.heroTime.textContent = time;
+    els.sidePlace.textContent = loc.title;
+    els.sideWeather.textContent = [temp, loc.condition].filter(Boolean).join(" · ");
+    els.sideTime.textContent = time;
+  }
+
+  function normalizeMoments(payload) {
+    const source = Array.isArray(payload) ? payload : payload?.posts || payload?.moments || payload?.items || [];
+    return source.map((item, index) => {
+      const type = String(pick(item, ["type", "kind", "contentType"], "moment")).toLowerCase();
+      return {
+        id: pick(item, ["id", "slug", "uuid"], `moment-${index}`),
+        type: type.includes("experience") ? "experience" : "moment",
+        title: pick(item, ["title", "headline", "caption"], "Untitled moment"),
+        text: pick(item, ["text", "description", "note", "body"], ""),
+        image: pick(item, ["image", "imageUrl", "url", "media.url", "cloudinaryUrl", "photo"], CONFIG.fallbackHero),
+        date: pick(item, ["date", "createdAt", "timestamp", "takenAt", "datetime"], new Date().toISOString()),
+        location: pick(item, ["location", "place", "locationName", "city"], ""),
+        source: pick(item, ["source", "camera", "device"], ""),
+        count: pick(item, ["count", "momentCount", "moments.length"], "")
+      };
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  async function loadMoments() {
+    try {
+      const payload = await fetchJSON(CONFIG.momentsEndpoint);
+      state.moments = normalizeMoments(payload);
+    } catch (error) {
+      console.warn("Moments file unavailable:", error);
+      state.moments = demoMoments();
+      showToast("Using sample moments until data/posts.json is available");
+    }
+    renderTimeline(state.moments);
+  }
+
+  function demoMoments() {
+    return [
+      { id: "m1", type: "moment", title: "Bonjour isn’t optional.", text: "The smallest customs often say the most about a place.", image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=85", date: new Date().toISOString(), location: "Pépieux, France", source: "Meta Ray-Ban" },
+      { id: "m2", type: "moment", title: "Hot dogs... in a jar.", text: "The grocery aisle produced a cultural plot twist.", image: "https://images.unsplash.com/photo-1606850246029-dd00bd5eff97?auto=format&fit=crop&w=1200&q=85", date: new Date(Date.now() - 86400000).toISOString(), location: "Lézignan-Corbières, France", source: "iPhone" },
+      { id: "e1", type: "experience", title: "A first week in the Minervois", text: "Markets, wrong turns and a growing list of things worth remembering.", image: "https://images.unsplash.com/photo-1503917988258-f87a78e3c995?auto=format&fit=crop&w=1400&q=85", date: new Date(Date.now() - 172800000).toISOString(), location: "Occitanie, France", count: 14 }
+    ];
+  }
+
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;" }[c]));
+  }
+
+  function dateBits(dateValue) {
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return { day: "", detail: "" };
+    return {
+      day: new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date),
+      detail: new Intl.DateTimeFormat(undefined, { weekday: "long", hour: "numeric", minute: "2-digit" }).format(date)
+    };
+  }
+
+  function renderTimeline(items) {
+    if (!items.length) {
+      els.timeline.innerHTML = `<div class="loading-card"><h3>No moments yet.</h3><p>Your next upload will begin the journal.</p></div>`;
+      return;
+    }
+    els.timeline.innerHTML = items.map(item => {
+      const d = dateBits(item.date);
+      const media = `style="background-image:url('${esc(item.image)}')"`;
+      if (item.type === "experience") {
+        return `<article class="timeline-item" data-search="${esc([item.title,item.text,item.location].join(" ").toLowerCase())}">
+          <time class="timeline-date">${esc(d.day)}</time><span class="timeline-dot"></span>
+          <div class="experience-card" ${media}>
+            <div class="experience-copy"><p class="eyebrow light">Experience</p><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p><p>${esc(item.count ? `${item.count} moments · ` : "")}${esc(item.location)}</p><span class="experience-link">Continue reading →</span></div>
+          </div></article>`;
+      }
+      return `<article class="timeline-item" data-search="${esc([item.title,item.text,item.location,item.source].join(" ").toLowerCase())}">
+        <time class="timeline-date">${esc(d.day)}</time><span class="timeline-dot"></span>
+        <div class="moment-card"><div class="moment-media" ${media} role="img" aria-label="${esc(item.title)}"></div>
+          <div class="moment-copy"><p class="eyebrow">Moment</p><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p>
+            <div class="moment-meta"><span>${esc(item.location)}</span><span>${esc(d.detail)}</span><span>${esc(item.source)}</span></div>
+          </div></div></article>`;
+    }).join("");
+  }
+
+  function runSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) { els.searchResults.innerHTML = ""; return; }
+    const found = state.moments.filter(item => [item.title,item.text,item.location,item.source].join(" ").toLowerCase().includes(q)).slice(0, 12);
+    els.searchResults.innerHTML = found.length ? found.map(item => `<div class="search-result"><strong>${esc(item.title)}</strong><span>${esc(item.location || item.text)}</span></div>`).join("") : `<p>No matching moments found.</p>`;
+  }
+
+  function wireUI() {
+    $("#menu-button").addEventListener("click", () => els.sidebar.classList.toggle("open"));
+    document.addEventListener("click", event => {
+      if (window.innerWidth <= 900 && els.sidebar.classList.contains("open") && !els.sidebar.contains(event.target) && !event.target.closest("#menu-button")) els.sidebar.classList.remove("open");
     });
-  });
+    $("#search-button").addEventListener("click", () => { els.searchDialog.showModal(); setTimeout(() => els.searchInput.focus(), 60); });
+    els.searchInput.addEventListener("input", event => runSearch(event.target.value));
+    $("#profile-button").addEventListener("click", () => showToast("Profile tools are coming in a future build."));
+    $("#refresh-button").addEventListener("click", async () => { showToast("Refreshing journal…"); await Promise.all([loadLocation(), loadMoments()]); showToast("Journal refreshed"); });
+    document.querySelectorAll(".side-nav a, .mobile-nav a").forEach(link => link.addEventListener("click", () => els.sidebar.classList.remove("open")));
+  }
 
-  dialog?.querySelector(".dialog-close")?.addEventListener("click", () => dialog.close());
-  dialog?.addEventListener("click", event => {
-    if (event.target === dialog) dialog.close();
-  });
-}
+  function setupAvatar() {
+    $("#avatar-initials").textContent = CONFIG.ownerInitials;
+    if (!CONFIG.avatarUrl) return;
+    const img = $("#avatar-image");
+    img.src = CONFIG.avatarUrl;
+    img.hidden = false;
+    img.addEventListener("error", () => { img.hidden = true; });
+  }
 
-updateGreeting();
-renderLocation();
-loadLocation();
-loadFeed();
-bindNavigation();
-setInterval(renderLocation, 30000);
+  async function init() {
+    setGreeting();
+    setupAvatar();
+    wireUI();
+    $("#build-stamp").textContent = `Built ${new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date())}`;
+    await Promise.all([loadLocation(), loadMoments()]);
+    setInterval(() => state.location && renderLocation(), 60000);
+  }
+
+  init().catch(error => { console.error(error); showToast("OgeneO hit a small snag while loading."); });
+})();
