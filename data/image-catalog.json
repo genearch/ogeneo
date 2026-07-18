@@ -1,0 +1,22 @@
+{
+  "hero": "castle-howard.jpg",
+  "moments": [
+    {
+      "file": "steak-tartare.jpg",
+      "caption": "Apparently the French take “rare” seriously.",
+      "place": "Le Sancerre, 35 rue des Abbesses, Paris 18"
+    },
+    {
+      "file": "lily-treat.jpg",
+      "caption": "Lily has absolutely no intention of sharing."
+    },
+    {
+      "file": "parking-sign.jpg",
+      "caption": "At least they’re honest."
+    },
+    {
+      "file": "airplane-islands.jpg",
+      "caption": "Sometimes the window seat wins."
+    }
+  ]
+}
