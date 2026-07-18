@@ -1,151 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#120a0c">
-  <meta name="description" content="OgeneO, a private-first visual journal of moments and experiences.">
-  <title>OgeneO</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OgeneO</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="Primary navigation">
-      <a class="brand" href="#top" aria-label="OgeneO home">
-        <span class="brand-mark">O</span>
-        <span>
-          <strong>OgeneO</strong>
-          <small>Remember your life.</small>
-        </span>
-      </a>
+<header class="topbar">
+<div class="avatar">G</div>
+<div class="brand">OGENEO</div>
+<nav>
+<a class="active" href="#">Home</a>
+<a href="#">Through My Eyes</a>
+<a href="#">Experiences</a>
+<a href="#">Map</a>
+<a href="#">Search</a>
+<a href="#">About</a>
+</nav>
+</header>
 
-      <nav class="side-nav">
-        <a class="active" href="#top">Home</a>
-        <a href="#moments">Moments</a>
-        <a href="#experiences">Experiences</a>
-        <a href="#collections">Collections</a>
-        <a href="#map">Map</a>
-        <a href="#about">About Gene</a>
-      </nav>
+<section class="hero">
+<div class="hero-text">
+<h1>See the world<br>through my eyes.</h1>
+<p>Every post is a Moment. Everything else becomes part of the story.</p>
+</div>
 
-      <section class="side-status" aria-labelledby="side-location-label">
-        <p id="side-location-label" class="eyebrow">Currently wandering</p>
-        <p class="side-place" id="side-place">Loading location…</p>
-        <p class="side-weather" id="side-weather">Checking the sky…</p>
-        <p class="side-time" id="side-time">Local time</p>
-      </section>
-    </aside>
+<div class="wander-card">
+<div class="label">📍 CURRENTLY WANDERING</div>
+<h2>🇫🇷 Pépieux, France</h2>
+<p>Researching village cafés ☕</p>
+<div class="meta">
+<span>☀ 82°F (28°C)</span>
+<span>7:42 PM</span>
+</div>
+</div>
+</section>
 
-    <div class="main-column">
-      <header class="topbar" id="top">
-        <button class="mobile-brand" type="button" aria-label="Open navigation" id="menu-button">
-          <span class="brand-mark small">O</span>
-          <span>OgeneO</span>
-        </button>
+<main>
+<h2>Latest Moments</h2>
+<div id="moments" class="grid"></div>
+</main>
 
-        <div class="top-actions">
-          <button class="icon-button" type="button" aria-label="Search" id="search-button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m1.35-5.65A7 7 0 1 1 4 11a7 7 0 0 1 14 0Z"/></svg>
-          </button>
-          <button class="avatar-button" type="button" aria-label="Profile" id="profile-button">
-            <span id="avatar-initials">GA</span>
-            <img id="avatar-image" alt="Gene" hidden>
-          </button>
-        </div>
-      </header>
-
-      <main>
-        <section class="intro wrap">
-          <p class="date-line" id="today-label"></p>
-          <h1 id="greeting">Good morning.</h1>
-          <p>Here’s what’s on my mind today.</p>
-        </section>
-
-        <section class="hero wrap" aria-labelledby="hero-title">
-          <div class="hero-image" id="hero-image" role="img" aria-label="Current location"></div>
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            <p class="eyebrow light">Currently wandering</p>
-            <h2 id="hero-title">Somewhere worth remembering</h2>
-            <p class="hero-note" id="hero-note">A fresh page is loading.</p>
-            <div class="hero-meta">
-              <span id="hero-location">Finding the map pin…</span>
-              <span id="hero-condition">Reading the weather…</span>
-              <span id="hero-local-time">Finding local time…</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="journal wrap" id="moments" aria-labelledby="journal-title">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Today</p>
-              <h2 id="journal-title">The story so far</h2>
-            </div>
-            <button class="text-button" id="refresh-button" type="button">Refresh</button>
-          </div>
-
-          <div class="timeline" id="timeline" aria-live="polite">
-            <article class="loading-card">
-              <div class="skeleton image"></div>
-              <div class="skeleton line wide"></div>
-              <div class="skeleton line"></div>
-            </article>
-          </div>
-        </section>
-
-        <section class="empty-section wrap" id="experiences">
-          <p class="eyebrow">Experiences</p>
-          <h2>Stories discovered between the moments.</h2>
-          <p>When related moments begin to form a larger story, they will appear directly in the journal.</p>
-        </section>
-
-        <section class="empty-section wrap" id="collections">
-          <p class="eyebrow">Collections</p>
-          <h2>Loose constellations of places, people, and ideas.</h2>
-        </section>
-
-        <section class="empty-section wrap" id="map">
-          <p class="eyebrow">Map</p>
-          <h2>Every pin has a story hiding beneath it.</h2>
-        </section>
-
-        <section class="about wrap" id="about">
-          <p class="eyebrow">About</p>
-          <h2>Designed to remember a life, not merely store pictures.</h2>
-          <p>OgeneO is Gene’s living visual journal, a place where photos, places, weather, notes and small observations become stories.</p>
-        </section>
-      </main>
-
-      <footer class="footer wrap">
-        <span>OgeneO V31.1</span>
-        <span id="build-stamp"></span>
-      </footer>
-    </div>
-  </div>
-
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <a class="active" href="#top">Home</a>
-    <a href="#moments">Moments</a>
-    <a href="#experiences">Stories</a>
-    <a href="#map">Map</a>
-  </nav>
-
-  <dialog class="search-dialog" id="search-dialog">
-    <form method="dialog" class="search-box">
-      <div class="search-head">
-        <h2>Search the journal</h2>
-        <button class="icon-button" value="cancel" aria-label="Close search">×</button>
-      </div>
-      <input id="search-input" type="search" placeholder="Try a place, caption, or date" autocomplete="off">
-      <div id="search-results" class="search-results"></div>
-    </form>
-  </dialog>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="js/site.js" defer></script>
+<script src="js/site.js"></script>
 </body>
 </html>
