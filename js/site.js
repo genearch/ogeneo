@@ -1,13 +1,6 @@
-const mosaic = document.querySelector("#mosaic");
-const dialog = document.querySelector("#story-dialog");
-const wanderDialog = document.querySelector("#wander-dialog");
-const wanderTrigger = document.querySelector("#wander-trigger");
-const wanderInlineCard = document.querySelector("#wander-inline-card");
+const LOCATION_API = "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
 
-const LOCATION_API =
-  "https://ogeneo-location-api.y5xvsnh5vq.workers.dev/api/location";
-
-let currentWanderLocation = {
+const FALLBACK_LOCATION = {
   city: "Camarillo",
   region: "California",
   country: "United States",
@@ -15,62 +8,101 @@ let currentWanderLocation = {
   note: "The next entry is waiting.",
   updatedAt: null,
   weather: null,
-  journey: null,
-  recentStops: [],
   photoUrl: null
 };
 
-const countryFlags = {
-  "United States": "🇺🇸",
-  "United Kingdom": "🇬🇧",
-  "England": "🏴",
-  "France": "🇫🇷",
-  "Croatia": "🇭🇷",
-  "Italy": "🇮🇹",
-  "Spain": "🇪🇸",
-  "Germany": "🇩🇪",
-  "Canada": "🇨🇦",
-  "Mexico": "🇲🇽"
-};
+const fallbackFeed = [
+  {
+    type: "moment",
+    title: "Hot dogs... in a jar.",
+    caption: "Sometimes the little things make me smile.",
+    place: "Pépieux, France",
+    date: "Today",
+    time: "8:47 AM",
+    source: "meta",
+    image: "https://images.unsplash.com/photo-1585325701956-60dd9c8553bc?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    type: "moment",
+    title: "Bonjour isn't optional.",
+    caption: "A friendly reminder in case you forget.",
+    place: "Pépieux, France",
+    date: "Today",
+    time: "8:16 AM",
+    source: "meta",
+    image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    type: "moment",
+    title: "Can't park there.",
+    caption: "I mean... technically they never said I couldn't.",
+    place: "Minerve, France",
+    date: "Today",
+    time: "7:52 AM",
+    source: "camera",
+    image: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    type: "experience",
+    title: "Carcassonne Festival 2025",
+    caption: "A week of music, medieval streets, and unforgettable nights.",
+    date: "Jul 7 – Jul 13, 2025",
+    count: 24,
+    image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=1600&q=88"
+  },
+  {
+    type: "moment",
+    title: "Now this was worth the detour.",
+    caption: "Golden hour in Minerve.",
+    place: "Minerve, France",
+    date: "Yesterday",
+    time: "8:21 PM",
+    source: "meta",
+    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    type: "moment",
+    title: "Morning market before the crowds.",
+    caption: "Fresh figs, local cheese, and great people.",
+    place: "Pépieux, France",
+    date: "Yesterday",
+    time: "11:03 AM",
+    source: "meta",
+    image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    type: "experience",
+    title: "Road Trip Through Provence",
+    caption: "Sunflowers, hill towns, lavender fields, and a car full of good ideas.",
+    date: "Jul 5 – Jul 12, 2025",
+    count: 42,
+    image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=88"
+  }
+];
 
-const locationImages = {
-  "camarillo|california|united states": "assets/locations/camarillo-vineyard-sunset.jpg",
-  "ventura|california|united states": "assets/locations/ventura-pier.jpg"
-};
+const dialog = document.querySelector("#story-dialog");
+let currentLocation = { ...FALLBACK_LOCATION };
 
-function locationImageFor(location) {
-  if (location.photoUrl) return location.photoUrl;
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  const key = [location.city, location.region, location.country]
-    .map(value => String(value || "").trim().toLowerCase())
-    .join("|");
-
-  return locationImages[key] || "assets/locations/travel-fallback.jpg";
+function setAll(selector, value) {
+  document.querySelectorAll(selector).forEach(el => {
+    el.textContent = value;
+  });
 }
 
 function formatLocation(location) {
-  return [location.city, location.region].filter(Boolean).join(", ");
+  return [location.city, location.region].filter(Boolean).join(", ") || location.country || "Somewhere worth finding";
 }
 
-function formatUpdatedAt(value) {
-  if (!value) return "Recently";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Recently";
-  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
-  if (seconds < 60) return "Just now";
-  if (seconds < 3600) {
-    const minutes = Math.floor(seconds / 60);
-    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
-  }
-  if (seconds < 86400) {
-    const hours = Math.floor(seconds / 3600);
-    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-  }
-  const days = Math.floor(seconds / 86400);
-  return `${days} day${days === 1 ? "" : "s"} ago`;
-}
-
-function formatClock(timeZone) {
+function formatTime(timeZone) {
   try {
     return new Intl.DateTimeFormat("en-US", {
       timeZone,
@@ -82,276 +114,167 @@ function formatClock(timeZone) {
   }
 }
 
-function formatPhotoDate(value) {
-  const date = value ? new Date(value) : new Date();
-  if (Number.isNaN(date.getTime())) return "Today";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  }).format(date);
-}
-
-function renderWorldTimes() {
-  const ribbon = document.querySelector("[data-world-times]");
-  if (!ribbon) return;
-
-  const zones = [
-    {
-      label: currentWanderLocation.city || "Here",
-      zone: currentWanderLocation.timezone || "UTC",
-      icon: "📍",
-      current: true
-    },
-    { label: "Los Angeles", zone: "America/Los_Angeles", icon: "🌴" },
-    { label: "New York", zone: "America/New_York", icon: "🗽" },
-    { label: "London", zone: "Europe/London", icon: "🇬🇧" }
-  ];
-
-  ribbon.innerHTML = zones.map(item => `
-    <div class="world-time-item${item.current ? " current" : ""}">
-      <span>${item.icon} ${escapeHtml(item.label)}</span>
-      <strong>${formatClock(item.zone)}</strong>
-    </div>
-  `).join("");
-}
-
-function renderRecentStops() {
-  const ribbon = document.querySelector("[data-recent-stops]");
-  if (!ribbon) return;
-
-  const stops = Array.isArray(currentWanderLocation.recentStops)
-    ? currentWanderLocation.recentStops
-    : [];
-
-  if (!stops.length) {
-    ribbon.innerHTML =
-      '<span class="empty-stop">Your recent stops will appear after the next city change.</span>';
-    return;
+function shortZone(timeZone) {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      timeZoneName: "short"
+    }).formatToParts(new Date());
+    return parts.find(part => part.type === "timeZoneName")?.value || "";
+  } catch {
+    return "";
   }
-
-  ribbon.innerHTML = stops.slice(0, 5).map(stop => `
-    <div class="recent-stop">
-      <strong>${countryFlags[stop.country] || "📍"} ${escapeHtml(stop.city || "Unknown")}</strong>
-      <span>${formatUpdatedAt(stop.updatedAt)}</span>
-    </div>
-  `).join("");
-}
-function updateWanderDetails() {
-  const location = currentWanderLocation;
-  const weather = location.weather || {};
-  const journey = location.journey || {};
-
-  const setText = (selector, value) => {
-    const el = document.querySelector(selector);
-    if (el) el.textContent = value;
-  };
-
-  setText("[data-wander-flag]", countryFlags[location.country] || "🌍");
-  setText("[data-wander-country]", location.country || "");
-  setText("[data-wander-location]", formatLocation(location));
-  setText("[data-wander-note]",
-    location.note || "Somewhere between here and there.");
-  setText("[data-wander-time]", formatClock(location.timezone || "UTC"));
-  setText("[data-wander-updated]", formatUpdatedAt(location.updatedAt));
-
-  setText("[data-weather-icon]", weather.icon || "🌤️");
-  setText(
-    "[data-weather-temp]",
-    Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC)
-      ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
-      : "Weather unavailable"
-  );
-  setText("[data-weather-condition]", weather.condition || "");
-
-  setText("[data-journey-title]",
-    journey.status === "away" ? (journey.title || "On the road") : "Home");
-  setText("[data-journey-day]",
-    journey.status === "away"
-      ? `Day ${journey.day || 1}`
-      : "Between adventures");
-
-  setText("[data-photo-place]", formatLocation(location));
-  setText("[data-photo-date]", formatPhotoDate(location.updatedAt));
-
-  const photo = document.querySelector("[data-wander-photo]");
-  if (photo) {
-    photo.src = locationImageFor(location);
-  }
-
-
-  setText("[data-inline-wander-location]", formatLocation(location));
-  setText("[data-inline-wander-note]",
-    location.note || "Somewhere between here and there.");
-  setText("[data-inline-weather-icon]", weather.icon || "🌤️");
-  setText(
-    "[data-inline-weather-temp]",
-    Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC)
-      ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
-      : "Weather unavailable"
-  );
-
-  const inlinePhoto = document.querySelector("[data-inline-wander-photo]");
-  if (inlinePhoto) {
-    inlinePhoto.src = locationImageFor(location);
-  }
-
-  setText("[data-api-status]", "API healthy ●");
-  renderWorldTimes();
-  renderRecentStops();
 }
 
-async function loadWanderLocation() {
+function updateGreeting() {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning." : hour < 18 ? "Good afternoon." : "Good evening.";
+  setAll("[data-greeting]", greeting);
+}
+
+function renderLocation() {
+  const weather = currentLocation.weather || {};
+  const location = formatLocation(currentLocation);
+  const time = formatTime(currentLocation.timezone || "UTC");
+  const zone = shortZone(currentLocation.timezone || "UTC");
+  const hasTemps = Number.isFinite(weather.temperatureF) && Number.isFinite(weather.temperatureC);
+  const temp = hasTemps
+    ? `${Math.round(weather.temperatureF)}°F / ${Math.round(weather.temperatureC)}°C`
+    : "Weather unavailable";
+
+  setAll("[data-wander-location]", location);
+  setAll("[data-wander-note]", currentLocation.note || "Somewhere between here and there.");
+  setAll("[data-wander-time]", time);
+  setAll("[data-wander-zone]", zone);
+  setAll("[data-weather-icon]", weather.icon || "☀︎");
+  setAll("[data-weather-temp]", temp);
+  setAll("[data-weather-condition]", weather.condition || "");
+
+  document.querySelectorAll("[data-wander-photo]").forEach(img => {
+    img.src = currentLocation.photoUrl || "assets/locations/travel-fallback.jpg";
+  });
+}
+
+async function loadLocation() {
   try {
     const response = await fetch(LOCATION_API, { cache: "no-store" });
     if (!response.ok) throw new Error(`Location API returned ${response.status}`);
-    currentWanderLocation = {
-      ...currentWanderLocation,
-      ...(await response.json())
-    };
+    currentLocation = { ...currentLocation, ...(await response.json()) };
   } catch (error) {
-    console.error("Could not load current location:", error);
-    currentWanderLocation.note =
-      "The compass is temporarily taking a coffee break.";
-    const status = document.querySelector("[data-api-status]");
-    if (status) status.textContent = "API unavailable";
+    console.warn("Using fallback location:", error);
   }
-  updateWanderDetails();
+  renderLocation();
 }
 
-async function openWanderDialog() {
-  await loadWanderLocation();
-  if (typeof wanderDialog.showModal === "function") {
-    wanderDialog.showModal();
-  } else {
-    wanderDialog.setAttribute("open", "");
-  }
+function normalizePost(post) {
+  if (post.type === "experience") return post;
+  return {
+    type: post.type === "quote" ? "moment" : "moment",
+    title: post.title || post.quote || "Untitled moment",
+    caption: post.caption || "",
+    place: post.place || post.location || post.kicker || "",
+    date: post.date || "Recently",
+    time: post.time || "",
+    source: post.source || "camera",
+    image: post.image || "assets/locations/travel-fallback.jpg"
+  };
 }
 
-if (wanderDialog) {
-  wanderTrigger?.addEventListener("click", openWanderDialog);
-  wanderInlineCard?.addEventListener("click", openWanderDialog);
-
-  wanderDialog.querySelector(".dialog-close")?.addEventListener("click", () => {
-    if (typeof wanderDialog.close === "function") wanderDialog.close();
-    else wanderDialog.removeAttribute("open");
-  });
-
-  wanderDialog.addEventListener("click", event => {
-    if (event.target !== wanderDialog) return;
-    if (typeof wanderDialog.close === "function") wanderDialog.close();
-    else wanderDialog.removeAttribute("open");
-  });
-}
-
-
-function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-async function loadPosts() {
+async function loadFeed() {
+  let feed = fallbackFeed;
   try {
     const response = await fetch("data/posts.json", { cache: "no-store" });
-    if (!response.ok) throw new Error("Could not load posts");
-    let posts = await response.json();
-    const featured = posts.filter(p=>p.featured);
-    posts = (featured.length?featured:posts).slice(0,9);
-
-    mosaic.innerHTML = posts.map((post, index) => {
-      if (post.type === "quote") {
-        return `
-          <article class="card quote">
-            <span class="quote-mark">“</span>
-            <blockquote>${escapeHtml(post.quote)}</blockquote>
-            <cite>— ${escapeHtml(post.cite)}</cite>
-          </article>`;
+    if (response.ok) {
+      const posts = await response.json();
+      if (Array.isArray(posts) && posts.length) {
+        feed = posts.map(normalizePost);
       }
-
-      return `
-        <button class="card ${post.size}" type="button" data-index="${index}">
-          <img src="${post.image}" alt="" loading="lazy">
-          <span class="card-copy">
-            <span class="card-kicker">${escapeHtml(post.kicker)}</span>
-            <span class="card-title">${escapeHtml(post.title)}</span>
-            <span class="card-date">${escapeHtml(post.date)}</span>
-          </span>
-        </button>`;
-    }).join("");
-
-    mosaic.querySelectorAll("[data-index]").forEach(card => {
-      card.addEventListener("click", () => openStory(posts[Number(card.dataset.index)]));
-    });
-  } catch (error) {
-    console.error(error);
-    mosaic.innerHTML = "<p>Stories are temporarily unavailable.</p>";
+    }
+  } catch {
+    // The fallback feed keeps the page complete until the live data source is present.
   }
+  renderFeed(feed);
 }
 
-function openStory(post) {
-  dialog.querySelector(".dialog-media").innerHTML =
-    `<img src="${post.image}" alt="${escapeHtml(post.title)}">`;
-  dialog.querySelector(".dialog-meta").textContent = `${post.kicker} · ${post.date}`;
-  dialog.querySelector(".dialog-title").textContent = post.title;
-  dialog.querySelector(".dialog-caption").textContent = post.caption;
+function iconForSource(source) {
+  return source === "meta" ? '<span class="meta-glyph" title="Captured with Meta glasses">⌁</span>' : '<span class="camera-glyph" title="Camera">▣</span>';
+}
+
+function renderFeed(items) {
+  const feed = document.querySelector("#journal-feed");
+  feed.innerHTML = items.map((item, index) => {
+    if (item.type === "experience") {
+      return `
+        <article class="stream-item experience-row" id="${index === 3 ? "experiences" : ""}">
+          <div class="timeline-date"><strong>${escapeHtml(item.date || "")}</strong></div>
+          <button class="experience-card" type="button" data-index="${index}">
+            <img src="${escapeHtml(item.image)}" alt="" loading="lazy">
+            <span class="experience-shade"></span>
+            <span class="experience-copy">
+              <small>Experience</small>
+              <strong>${escapeHtml(item.title)}</strong>
+              <em>${escapeHtml(item.caption || "")}</em>
+              <span>${Number(item.count) || 0} moments <b>Open experience →</b></span>
+            </span>
+          </button>
+        </article>`;
+    }
+
+    return `
+      <article class="stream-item moment-row">
+        <div class="timeline-date"><strong>${escapeHtml(item.date || "")}</strong><span>${escapeHtml(item.time || "")}</span></div>
+        <button class="moment-card" type="button" data-index="${index}">
+          <img src="${escapeHtml(item.image)}" alt="" loading="lazy">
+          <span class="moment-copy">
+            <strong>${iconForSource(item.source)} ${escapeHtml(item.title)}</strong>
+            <em>${escapeHtml(item.caption || "")}</em>
+            <small>⌖ ${escapeHtml(item.place || "")}</small>
+          </span>
+          <span class="more">•••</span>
+        </button>
+      </article>`;
+  }).join("");
+
+  feed.querySelectorAll("[data-index]").forEach(button => {
+    button.addEventListener("click", () => openStory(items[Number(button.dataset.index)]));
+  });
+}
+
+function openStory(item) {
+  if (!dialog) return;
+  dialog.querySelector(".dialog-media").innerHTML = `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">`;
+  dialog.querySelector(".dialog-meta").textContent = item.type === "experience" ? `${item.count || 0} moments · ${item.date || ""}` : `${item.place || ""} · ${item.date || ""}`;
+  dialog.querySelector(".dialog-title").textContent = item.title || "";
+  dialog.querySelector(".dialog-caption").textContent = item.caption || "";
   dialog.showModal();
 }
 
-function updateLocalTime() {
-  const formatted = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Europe/London",
-    hour: "numeric",
-    minute: "2-digit"
-  }).format(new Date());
-
-  document.querySelectorAll("[data-local-time]").forEach(el => el.textContent = formatted);
-}
-
-document.querySelectorAll(".dialog-close").forEach(button => {
-  button.addEventListener("click", () => button.closest("dialog").close());
-});
-
-document.querySelector(".menu-button").addEventListener("click", event => {
-  const nav = document.querySelector("#site-nav");
-  const open = nav.classList.toggle("open");
-  event.currentTarget.setAttribute("aria-expanded", String(open));
-});
-
-document.querySelectorAll(".mobile-tabbar a").forEach(link => {
-  link.addEventListener("click", () => {
-    document.querySelectorAll(".mobile-tabbar a").forEach(item => item.classList.remove("active"));
-    link.classList.add("active");
+function bindNavigation() {
+  const menu = document.querySelector(".mobile-menu");
+  const sidebar = document.querySelector(".sidebar");
+  menu?.addEventListener("click", () => {
+    const open = sidebar.classList.toggle("open");
+    menu.setAttribute("aria-expanded", String(open));
   });
-});
 
-loadPosts();
-loadWanderLocation();
-setInterval(() => {
-  updateWanderDetails();
-}, 30000);
+  document.querySelectorAll(".side-nav a, .mobile-tabbar a").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelectorAll(".side-nav a, .mobile-tabbar a").forEach(item => item.classList.remove("active"));
+      link.classList.add("active");
+      sidebar.classList.remove("open");
+      menu?.setAttribute("aria-expanded", "false");
+    });
+  });
 
-function renderBuildStamp() {
-  const stamp = document.querySelector("#build-stamp");
-  if (!stamp) return;
-  const date = new Date(stamp.dataset.buildUtc);
-  if (Number.isNaN(date.getTime())) {
-    stamp.textContent = "v30";
-    return;
-  }
-  const formatted = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-    timeZoneName: "short"
-  }).format(date);
-  stamp.textContent = `v30 · published ${formatted}`;
+  dialog?.querySelector(".dialog-close")?.addEventListener("click", () => dialog.close());
+  dialog?.addEventListener("click", event => {
+    if (event.target === dialog) dialog.close();
+  });
 }
-renderBuildStamp();
+
+updateGreeting();
+renderLocation();
+loadLocation();
+loadFeed();
+bindNavigation();
+setInterval(renderLocation, 30000);
