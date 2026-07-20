@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-black: #000000;
+  --dark-violet: #4A154B;
+  --burnished-gold: #D4AF37;
+  --text-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--bg-black);
+  color: var(--text-white);
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.ogeneo-header {
+  border-bottom: 2px solid var(--burnished-gold);
+  background-color: var(--dark-violet);
+}
+
+.gold-text {
+  color: var(--burnished-gold);
+}
+
+.nav-link:hover {
+  color: var(--burnished-gold);
+}
