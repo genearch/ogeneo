@@ -1,0 +1,61 @@
+---
+import SourceGlyph from './SourceGlyph.astro';
+import { imgUrl } from '../lib/cloudinary';
+import type { Moment } from '../lib/types';
+
+interface Props { moment: Moment; cloudName?: string; }
+const { moment, cloudName } = Astro.props;
+
+const captured = new Date(moment.captured_at);
+const sameYear = captured.getFullYear() === new Date().getFullYear();
+const isToday = captured.toDateString() === new Date().toDateString();
+const when = isToday
+  ? captured.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  : captured.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(sameYear ? {} : { year: 'numeric' }) });
+---
+<a class="moment-card" href={`/moments/${moment.id}`}>
+  {moment.cloudinary_public_id && (
+    <div class="thumb">
+      <img
+        src={imgUrl(cloudName, moment.cloudinary_public_id, 'f_auto,q_auto,w_480,h_480,c_fill')}
+        alt={moment.caption ?? 'Moment'}
+        loading="lazy"
+        width="480" height="480"
+      />
+      <span class="badge"><SourceGlyph source={moment.source} /></span>
+    </div>
+  )}
+  <div class="body">
+    <p class="caption">{moment.caption ?? 'Untitled moment'}</p>
+    <p class="meta muted">
+      {moment.place && <span>{moment.place}</span>}
+      <span>{when}</span>
+    </p>
+  </div>
+</a>
+
+<style>
+  .moment-card {
+    display: flex; gap: 18px; align-items: stretch;
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 14px;
+    padding: 12px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .moment-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .thumb {
+    position: relative; flex: 0 0 148px;
+    border-radius: 10px; overflow: hidden;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 1; }
+  .badge { position: absolute; top: 8px; left: 8px; }
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; min-width: 0; }
+  .caption { margin: 0; font-size: 21px; line-height: 1.35; }
+  .meta { margin: 0; display: flex; flex-direction: column; font-size: 15px; }
+  @media (min-width: 721px) {
+    .thumb { flex-basis: 190px; }
+    .caption { font-size: 23px; }
+    .meta { flex-direction: row; gap: 14px; }
+  }
+</style>

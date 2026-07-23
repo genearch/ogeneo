@@ -1,0 +1,33 @@
+---
+import { imgUrl } from '../lib/cloudinary';
+import type { Experience } from '../lib/types';
+interface Props { experience: Experience; cloudName?: string; }
+const { experience: e, cloudName } = Astro.props;
+const fmt = (d: string) =>
+  new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+const range = fmt(e.start_at) === fmt(e.end_at) ? fmt(e.start_at) : `${fmt(e.start_at)} – ${fmt(e.end_at)}`;
+---
+<a class="exp-card" href={`/experiences/${e.id}`}>
+  {e.cover_public_id && (
+    <img src={imgUrl(cloudName, e.cover_public_id, 'f_auto,q_auto,w_800,h_450,c_fill')} alt={e.title} loading="lazy" width="800" height="450" />
+  )}
+  <div class="body">
+    <p class="kicker muted">Experience · {range} · {e.moment_count ?? 0} moments</p>
+    <p class="title">{e.title}</p>
+    {e.summary && <p class="summary muted">{e.summary}</p>}
+  </div>
+</a>
+
+<style>
+  .exp-card {
+    display: block; background: var(--card);
+    border: 1px solid var(--card-edge); border-radius: 14px; overflow: hidden;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .exp-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .exp-card img { width: 100%; aspect-ratio: 16/7; object-fit: cover; }
+  .body { padding: 16px 18px 18px; }
+  .kicker { margin: 0 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .title { margin: 0; font-family: var(--display); font-size: 27px; color: var(--gold); }
+  .summary { margin: 6px 0 0; font-size: 16px; }
+</style>

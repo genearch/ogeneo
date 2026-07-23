@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import type { Env, Moment } from '../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const { results } = await env.DB.prepare(
+  `SELECT id, caption, place, lat, lng, source, captured_at FROM moments
+   WHERE lat IS NOT NULL ORDER BY captured_at DESC LIMIT 200`
+).all<Moment>();
+const points = results ?? [];
+---
+<Layout title="Map · OGENEO" active="map">
+  <h1>Where the Moments happened</h1>
+  <div id="map"></div>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script is:inline define:vars={{ points }}>
+    const map = L.map('map', { scrollWheelZoom: false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19,
+    }).addTo(map);
+    if (points.length) {
+      const group = L.featureGroup(
+        points.map((p) =>
+          L.circleMarker([p.lat, p.lng], {
+            radius: 7, color: '#c9a468', fillColor: '#c9a468', fillOpacity: 0.75, weight: 1,
+          }).bindPopup(
+            `<a href="/moments/${p.id}">${(p.caption ?? 'Moment').replace(/</g, '&lt;')}</a><br><small>${p.place ?? ''}</small>`
+          )
+        )
+      ).addTo(map);
+      map.fitBounds(group.getBounds().pad(0.25));
+    } else {
+      map.setView([20, 0], 2);
+    }
+  </script>
+</Layout>
+
+<style>
+  h1 { font-family: var(--display); font-weight: 500; font-size: 34px; margin: 4px 0 18px; }
+  #map { height: 70dvh; border-radius: 16px; border: 1px solid var(--card-edge); background: var(--card); }
+</style>

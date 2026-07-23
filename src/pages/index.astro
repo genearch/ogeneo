@@ -1,0 +1,121 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FilterChips from '../components/FilterChips.astro';
+import MomentCard from '../components/MomentCard.astro';
+import ThoughtCard from '../components/ThoughtCard.astro';
+import ExperienceCard from '../components/ExperienceCard.astro';
+import WanderingCard from '../components/WanderingCard.astro';
+import type { Env, Moment, Thought, Experience, Wandering } from '../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const filter = Astro.url.searchParams.get('filter') ?? 'all';
+const cloudName = env.CLOUDINARY_CLOUD_NAME;
+
+let momentWhere = '';
+if (filter === 'meta') momentWhere = `WHERE source = 'meta'`;
+if (filter === 'iphone') momentWhere = `WHERE source = 'iphone'`;
+
+const showMoments = filter !== 'thoughts' && filter !== 'experiences';
+const showThoughts = filter === 'all' || filter === 'thoughts';
+const showExperiences = filter === 'all' || filter === 'experiences';
+
+const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes] =
+  await Promise.all([
+    showMoments
+      ? env.DB.prepare(`SELECT * FROM moments ${momentWhere} ORDER BY captured_at DESC LIMIT 40`).all<Moment>()
+      : Promise.resolve({ results: [] as Moment[] }),
+    showThoughts
+      ? env.DB.prepare(`SELECT * FROM thoughts ORDER BY created_at DESC LIMIT 10`).all<Thought>()
+      : Promise.resolve({ results: [] as Thought[] }),
+    showExperiences
+      ? env.DB.prepare(
+          `SELECT e.*, COUNT(m.id) AS moment_count,
+                  (SELECT cloudinary_public_id FROM moments
+                   WHERE experience_id = e.id AND cloudinary_public_id IS NOT NULL
+                   ORDER BY captured_at ASC LIMIT 1) AS cover_public_id
+           FROM experiences e LEFT JOIN moments m ON m.experience_id = e.id
+           GROUP BY e.id ORDER BY e.start_at DESC LIMIT 6`
+        ).all<Experience>()
+      : Promise.resolve({ results: [] as Experience[] }),
+    env.DB.prepare(`SELECT value FROM settings WHERE key = 'currently_wandering'`).first<{ value: string }>(),
+    env.DB.prepare(`SELECT COUNT(*) AS n FROM moments`).first<{ n: number }>(),
+    // Anniversary resurfacing: same month+day, earlier year
+    env.DB.prepare(
+      `SELECT * FROM moments
+       WHERE strftime('%m-%d', captured_at) = strftime('%m-%d', 'now')
+         AND strftime('%Y', captured_at) < strftime('%Y', 'now')
+       ORDER BY captured_at DESC LIMIT 1`
+    ).first<Moment>(),
+  ]);
+
+const moments = momentsRes.results ?? [];
+const thoughts = thoughtsRes.results ?? [];
+const experiences = experiencesRes.results ?? [];
+const wandering: Wandering | null = wanderRow ? JSON.parse(wanderRow.value) : null;
+const totalMoments = countRow?.n ?? 0;
+const milestone = [10, 25, 50, 100, 250, 500, 1000].includes(totalMoments) ? totalMoments : null;
+
+// Editorial interleave: a thought after every 2 moments, an experience after every 4.
+type FeedItem =
+  | { kind: 'moment'; moment: Moment }
+  | { kind: 'thought'; thought: Thought }
+  | { kind: 'experience'; experience: Experience };
+const feed: FeedItem[] = [];
+if (filter === 'thoughts') {
+  for (const t of thoughts) feed.push({ kind: 'thought', thought: t });
+} else if (filter === 'experiences') {
+  for (const e of experiences) feed.push({ kind: 'experience', experience: e });
+} else {
+  let ti = 0, ei = 0;
+  moments.forEach((m, i) => {
+    feed.push({ kind: 'moment', moment: m });
+    if (filter === 'all' && (i + 1) % 2 === 0 && ti < thoughts.length) {
+      feed.push({ kind: 'thought', thought: thoughts[ti++] });
+    }
+    if (filter === 'all' && (i + 1) % 4 === 0 && ei < experiences.length) {
+      feed.push({ kind: 'experience', experience: experiences[ei++] });
+    }
+  });
+}
+---
+<Layout active="home">
+  <FilterChips current={filter} />
+
+  {wandering && filter === 'all' && <div class="row"><WanderingCard wandering={wandering} /></div>}
+
+  {milestone && (
+    <div class="row milestone">
+      <p>Journey milestone: this journal just passed <strong>{milestone}</strong> moments.</p>
+    </div>
+  )}
+
+  {annivRes && filter === 'all' && (
+    <div class="row anniversary">
+      <p class="kicker muted">On this day, {new Date(annivRes.captured_at).getFullYear()}</p>
+      <MomentCard moment={annivRes} cloudName={cloudName} />
+    </div>
+  )}
+
+  {feed.map((item) => (
+    <div class="row">
+      {item.kind === 'moment' && <MomentCard moment={item.moment} cloudName={cloudName} />}
+      {item.kind === 'thought' && <ThoughtCard thought={item.thought} />}
+      {item.kind === 'experience' && <ExperienceCard experience={item.experience} cloudName={cloudName} />}
+    </div>
+  ))}
+
+  {feed.length === 0 && (
+    <p class="muted empty">Nothing here yet. The first Moment is the hardest.</p>
+  )}
+</Layout>
+
+<style>
+  .row { margin-bottom: 16px; }
+  .milestone {
+    border: 1px solid var(--gold); border-radius: 14px; padding: 14px 18px;
+    background: color-mix(in srgb, var(--gold) 8%, var(--card));
+  }
+  .milestone p { margin: 0; font-family: var(--display); font-size: 20px; }
+  .anniversary .kicker { font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; margin: 0 0 8px; }
+  .empty { text-align: center; padding: 60px 0; }
+</style>

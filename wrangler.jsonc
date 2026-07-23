@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ogeneo",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./dist/_worker.js/index.js",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ogeneo",
+      "database_id": "392b8417-effd-49e1-a956-584c6753ccc8"
+    }
+  ],
+  "vars": {
+    "CLOUDINARY_CLOUD_NAME": "REPLACE_ME"
+  }
+  // Secrets (set via `wrangler secret put`):
+  //   UPLOAD_SECRET        - shared secret the iPhone Shortcut sends
+  //   CLOUDINARY_API_KEY
+  //   CLOUDINARY_API_SECRET
+}

@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MomentCard from '../../components/MomentCard.astro';
+import type { Env, Experience, Moment } from '../../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const id = Number(Astro.params.id);
+const experience = Number.isFinite(id)
+  ? await env.DB.prepare(`SELECT * FROM experiences WHERE id = ?1`).bind(id).first<Experience>()
+  : null;
+if (!experience) return new Response('Not found', { status: 404 });
+
+const { results: moments } = await env.DB.prepare(
+  `SELECT * FROM moments WHERE experience_id = ?1 ORDER BY captured_at ASC`
+).bind(id).all<Moment>();
+
+const fmt = (d: string) =>
+  new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Layout title={`${experience.title} · OGENEO`} active="collections">
+  <header class="head">
+    <p class="kicker muted">Experience · {fmt(experience.start_at)}</p>
+    <h1>{experience.title}</h1>
+    {experience.summary && <p class="summary muted">{experience.summary}</p>}
+  </header>
+  <div class="list">
+    {(moments ?? []).map((m) => <MomentCard moment={m} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+  </div>
+</Layout>
+
+<style>
+  .head { margin-bottom: 24px; }
+  .kicker { font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; margin: 0 0 6px; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: 38px; margin: 0 0 6px; color: var(--gold); }
+  .summary { margin: 0; font-size: 18px; }
+  .list { display: flex; flex-direction: column; gap: 16px; }
+</style>

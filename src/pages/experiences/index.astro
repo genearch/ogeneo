@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ExperienceCard from '../../components/ExperienceCard.astro';
+import type { Env, Experience } from '../../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const { results } = await env.DB.prepare(
+  `SELECT e.*, COUNT(m.id) AS moment_count,
+          (SELECT cloudinary_public_id FROM moments
+           WHERE experience_id = e.id AND cloudinary_public_id IS NOT NULL
+           ORDER BY captured_at ASC LIMIT 1) AS cover_public_id
+   FROM experiences e LEFT JOIN moments m ON m.experience_id = e.id
+   GROUP BY e.id ORDER BY e.start_at DESC`
+).all<Experience>();
+---
+<Layout title="Collections · OGENEO" active="collections">
+  <h1>Experiences</h1>
+  <p class="muted intro">Related Moments, grouped by time, place and travel patterns.</p>
+  <div class="grid">
+    {(results ?? []).map((e) => <ExperienceCard experience={e} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+  </div>
+</Layout>
+
+<style>
+  h1 { font-family: var(--display); font-weight: 500; font-size: 36px; margin: 4px 0 4px; }
+  .intro { margin: 0 0 24px; }
+  .grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+</style>

@@ -1,0 +1,21 @@
+---
+interface Props { source: string; }
+const { source } = Astro.props;
+---
+{source === 'meta' ? (
+  <span class="glyph" title="Captured through Meta glasses" aria-label="Meta glasses capture">
+    <svg viewBox="0 0 34 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <circle cx="9" cy="8" r="6" />
+      <circle cx="25" cy="8" r="6" />
+      <path d="M15 8h4M1 6l2-2M33 6l-2-2" />
+    </svg>
+  </span>
+) : (
+  <span class="glyph" title="iPhone capture" aria-label="iPhone capture">
+    <svg viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.6">
+      <rect x="2" y="5" width="20" height="13" rx="2.5" />
+      <path d="M8 5l1.6-2.4h4.8L16 5" />
+      <circle cx="12" cy="11.5" r="3.6" />
+    </svg>
+  </span>
+)}

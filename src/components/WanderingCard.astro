@@ -1,0 +1,38 @@
+---
+import type { Wandering } from '../lib/types';
+interface Props { wandering: Wandering; }
+const { wandering } = Astro.props;
+---
+<div class="wander">
+  <span class="pulse" aria-hidden="true"></span>
+  <div>
+    <p class="label muted">Currently wandering</p>
+    <p class="place">{wandering.place}</p>
+    {wandering.note && <p class="note muted">{wandering.note}</p>}
+  </div>
+</div>
+
+<style>
+  .wander {
+    display: flex; gap: 14px; align-items: center;
+    background: linear-gradient(135deg, var(--card), color-mix(in srgb, var(--burgundy) 30%, var(--card)));
+    border: 1px solid var(--card-edge);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .pulse {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 60%, transparent);
+    animation: pulse 2.4s infinite;
+    flex: 0 0 auto;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 50%, transparent); }
+    70% { box-shadow: 0 0 0 12px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .label { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; }
+  .place { margin: 2px 0 0; font-family: var(--display); font-size: 24px; color: var(--gold); }
+  .note { margin: 2px 0 0; font-size: 15px; }
+</style>

@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MomentCard from '../components/MomentCard.astro';
+import type { Env, Moment } from '../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const q = (Astro.url.searchParams.get('q') ?? '').trim();
+let results: Moment[] = [];
+if (q) {
+  const like = `%${q}%`;
+  const res = await env.DB.prepare(
+    `SELECT * FROM moments
+     WHERE caption LIKE ?1 OR place LIKE ?1 OR ai_tags LIKE ?1
+     ORDER BY captured_at DESC LIMIT 50`
+  ).bind(like).all<Moment>();
+  results = res.results ?? [];
+}
+---
+<Layout title="Search · OGENEO" active="search">
+  <form class="search" method="get" action="/search">
+    <input type="search" name="q" value={q} placeholder="Captions, places, tags…" autofocus />
+    <button type="submit">Search</button>
+  </form>
+  {q && <p class="muted count">{results.length} result{results.length === 1 ? '' : 's'} for “{q}”</p>}
+  <div class="list">
+    {results.map((m) => <MomentCard moment={m} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+  </div>
+</Layout>
+
+<style>
+  .search { display: flex; gap: 10px; margin: 8px 0 20px; }
+  input {
+    flex: 1; background: var(--card); border: 1px solid var(--card-edge);
+    border-radius: 999px; padding: 12px 20px; color: var(--text);
+    font-family: var(--serif); font-size: 17px;
+  }
+  input:focus { outline: none; border-color: var(--gold); }
+  button {
+    background: var(--burgundy); color: var(--text); border: 1px solid var(--burgundy-bright);
+    border-radius: 999px; padding: 0 22px; font-family: var(--serif); font-size: 16px; cursor: pointer;
+  }
+  .count { margin: 0 0 16px; }
+  .list { display: flex; flex-direction: column; gap: 16px; }
+</style>

@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SourceGlyph from '../../components/SourceGlyph.astro';
+import { imgUrl } from '../../lib/cloudinary';
+import type { Env, Moment, Experience } from '../../lib/types';
+
+const env = Astro.locals.runtime.env as Env;
+const id = Number(Astro.params.id);
+const moment = Number.isFinite(id)
+  ? await env.DB.prepare(`SELECT * FROM moments WHERE id = ?1`).bind(id).first<Moment>()
+  : null;
+if (!moment) return new Response('Not found', { status: 404 });
+
+const experience = moment.experience_id
+  ? await env.DB.prepare(`SELECT * FROM experiences WHERE id = ?1`).bind(moment.experience_id).first<Experience>()
+  : null;
+
+const tags: string[] = moment.ai_tags ? JSON.parse(moment.ai_tags) : [];
+const captured = new Date(moment.captured_at).toLocaleString('en-US', {
+  weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+});
+---
+<Layout title={moment.caption ?? 'Moment'} active="home">
+  <article class="moment">
+    {moment.cloudinary_public_id && (
+      <img
+        class="hero"
+        src={imgUrl(env.CLOUDINARY_CLOUD_NAME, moment.cloudinary_public_id, 'f_auto,q_auto,w_1600')}
+        alt={moment.caption ?? 'Moment'}
+      />
+    )}
+    <div class="info">
+      <p class="glyph-row"><SourceGlyph source={moment.source} />
+        <span class="muted">{moment.source === 'meta' ? 'Through My Eyes' : moment.camera_model ?? 'Photo'}</span>
+        {moment.is_lily === 1 && <span class="lily" title="A Lily appearance">Lily was here</span>}
+      </p>
+      <h1>{moment.caption ?? 'Untitled moment'}</h1>
+      <p class="muted">{captured}{moment.place ? ` · ${moment.place}` : ''}</p>
+      {tags.length > 0 && (
+        <p class="tags">{tags.map((t) => <span class="tag">#{t}</span>)}</p>
+      )}
+      {experience && (
+        <a class="exp-link" href={`/experiences/${experience.id}`}>
+          Part of the experience: <strong>{experience.title}</strong> →
+        </a>
+      )}
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .moment { max-width: 860px; margin: 0 auto; }
+  .hero { width: 100%; border-radius: 16px; border: 1px solid var(--card-edge); }
+  .info { padding: 22px 4px; }
+  .glyph-row { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
+  .lily {
+    font-family: var(--hand); font-size: 20px; color: var(--gold);
+    border: 1px dashed var(--gold); border-radius: 999px; padding: 2px 12px;
+  }
+  h1 { font-family: var(--display); font-weight: 500; font-size: 34px; margin: 0 0 6px; }
+  .tags { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 0; }
+  .tag { color: var(--gold); font-size: 15px; }
+  .exp-link { display: inline-block; margin-top: 18px; color: var(--text-dim); }
+  .exp-link:hover { color: var(--gold); }
+</style>
