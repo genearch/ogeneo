@@ -28,7 +28,7 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
         <nav class="top-nav" aria-label="Primary">
           <a href="/" class:list={[{ active: active === 'home' }]}>Home</a>
           <a href="/map" class:list={[{ active: active === 'map' }]}>Map</a>
-          <a href="/experiences" class:list={[{ active: active === 'collections' }]}>Collections</a>
+          <a href="/experiences" class:list={[{ active: active === 'collections' }]}>Experiences</a>
           <a href="/about" class:list={[{ active: active === 'about' }]}>About</a>
         </nav>
         <form class="header-search" method="get" action="/search">
@@ -39,7 +39,7 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
       <nav class="mobile-menu" aria-label="Menu">
         <a href="/">Home</a>
         <a href="/map">Map</a>
-        <a href="/experiences">Collections</a>
+        <a href="/experiences">Experiences</a>
         <a href="/search">Search</a>
         <a href="/about">About</a>
       </nav>
@@ -63,7 +63,7 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
       </a>
       <a href="/experiences" class:list={[{ active: active === 'collections' }]}>
         <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 6V4h8v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        <span>Collections</span>
+        <span>Experiences</span>
       </a>
       <a href="/search" class:list={[{ active: active === 'search' }]}>
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.6"/></svg>
