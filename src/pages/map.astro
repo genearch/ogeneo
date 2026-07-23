@@ -1,13 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { imgUrl } from '../lib/cloudinary';
 import type { Env, Moment } from '../lib/types';
 
 const env = Astro.locals.runtime.env as Env;
 const { results } = await env.DB.prepare(
-  `SELECT id, caption, place, lat, lng, source, captured_at FROM moments
-   WHERE lat IS NOT NULL ORDER BY captured_at DESC LIMIT 200`
+  `SELECT id, caption, place, lat, lng, source, captured_at, cloudinary_public_id
+   FROM moments WHERE lat IS NOT NULL ORDER BY captured_at DESC LIMIT 200`
 ).all<Moment>();
-const points = results ?? [];
+
+const points = (results ?? []).map((p) => ({
+  id: p.id,
+  caption: p.caption ?? 'Moment',
+  place: p.place ?? '',
+  lat: p.lat,
+  lng: p.lng,
+  thumb: p.cloudinary_public_id
+    ? imgUrl(env.CLOUDINARY_CLOUD_NAME, p.cloudinary_public_id, 'f_auto,q_auto,w_220,h_150,c_fill')
+    : null,
+}));
 ---
 <Layout title="Map · OGENEO" active="map">
   <h1>Where the Moments happened</h1>
@@ -15,19 +26,25 @@ const points = results ?? [];
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script is:inline define:vars={{ points }}>
+    const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
     const map = L.map('map', { scrollWheelZoom: false });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19,
     }).addTo(map);
     if (points.length) {
       const group = L.featureGroup(
-        points.map((p) =>
-          L.circleMarker([p.lat, p.lng], {
+        points.map((p) => {
+          const img = p.thumb
+            ? `<a href="/moments/${p.id}"><img src="${esc(p.thumb)}" alt="" style="width:220px;height:150px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px;"></a>`
+            : '';
+          return L.circleMarker([p.lat, p.lng], {
             radius: 7, color: '#c9a468', fillColor: '#c9a468', fillOpacity: 0.75, weight: 1,
           }).bindPopup(
-            `<a href="/moments/${p.id}">${(p.caption ?? 'Moment').replace(/</g, '&lt;')}</a><br><small>${p.place ?? ''}</small>`
-          )
-        )
+            `${img}<a href="/moments/${p.id}" style="font-family:Georgia,serif;font-size:15px;">${esc(p.caption)}</a>` +
+            (p.place ? `<br><small>${esc(p.place)}</small>` : ''),
+            { maxWidth: 240 }
+          );
+        })
       ).addTo(map);
       map.fitBounds(group.getBounds().pad(0.25));
     } else {
@@ -37,6 +54,11 @@ const points = results ?? [];
 </Layout>
 
 <style>
-  h1 { font-family: var(--display); font-weight: 500; font-size: 34px; margin: 4px 0 18px; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: 30px; margin: 4px 0 16px; }
   #map { height: 70dvh; border-radius: 16px; border: 1px solid var(--card-edge); background: var(--card); }
+  :global(.leaflet-popup-content-wrapper) {
+    background: #1e1713; color: #efe7dc; border-radius: 12px;
+  }
+  :global(.leaflet-popup-content a) { color: #c9a468; }
+  :global(.leaflet-popup-tip) { background: #1e1713; }
 </style>
