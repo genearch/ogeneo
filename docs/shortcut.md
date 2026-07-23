@@ -32,6 +32,29 @@ auto-tags them `source=meta` and the site shows the glasses glyph
 ("Through My Eyes"). You can also force it by adding a `source` = `meta`
 form field in a second Shortcut variant.
 
+## Second Shortcut: Post a Comet
+
+Comets (thoughts) get their own Shortcut, run from the home screen rather
+than the share sheet:
+
+1. New Shortcut → name it "Post a Comet".
+2. Actions in order:
+   1. **Ask for Input** (Text), prompt "What's on your mind?"
+   2. **Get Current Location** (this is what puts the pin on the card).
+   3. **Get Contents of URL**:
+      - URL: `https://YOUR-WORKER.workers.dev/api/thought`
+      - Method: POST
+      - Headers: `Authorization` = `Bearer YOUR_UPLOAD_SECRET`
+      - Request Body: **Form**
+        - `body` = Provided Input
+        - `lat` = Current Location latitude
+        - `lng` = Current Location longitude
+        - `place` = Current Location city (or leave it off)
+
+A comet with location shows a small gold pin on its card; tapping the pin
+opens the map centered where it was posted, popup open. No location, no
+pin — the card just skips it.
+
 ## What the Worker does
 
 Uploads media to Cloudinary (folder `ogeneo/`), infers tags from the caption

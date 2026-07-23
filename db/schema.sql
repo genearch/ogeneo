@@ -37,7 +37,10 @@ CREATE INDEX IF NOT EXISTS idx_moments_experience ON moments(experience_id);
 CREATE TABLE IF NOT EXISTS thoughts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   body TEXT NOT NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  lat REAL,
+  lng REAL,
+  place TEXT
 );
 
 -- single-row-per-key settings, e.g. currently_wandering

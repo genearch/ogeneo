@@ -4,10 +4,16 @@ import { imgUrl } from '../lib/cloudinary';
 import type { Env, Moment } from '../lib/types';
 
 const env = Astro.locals.runtime.env as Env;
-const { results } = await env.DB.prepare(
-  `SELECT id, caption, place, lat, lng, source, captured_at, cloudinary_public_id
-   FROM moments WHERE lat IS NOT NULL ORDER BY captured_at DESC LIMIT 200`
-).all<Moment>();
+const [{ results }, { results: cometRows }] = await Promise.all([
+  env.DB.prepare(
+    `SELECT id, caption, place, lat, lng, source, captured_at, cloudinary_public_id
+     FROM moments WHERE lat IS NOT NULL ORDER BY captured_at DESC LIMIT 200`
+  ).all<Moment>(),
+  env.DB.prepare(
+    `SELECT id, body, place, lat, lng, created_at FROM thoughts
+     WHERE lat IS NOT NULL ORDER BY created_at DESC LIMIT 200`
+  ).all<{ id: number; body: string; place: string | null; lat: number; lng: number; created_at: string }>(),
+]);
 
 const points = (results ?? []).map((p) => ({
   id: p.id,
@@ -19,34 +25,71 @@ const points = (results ?? []).map((p) => ({
     ? imgUrl(env.CLOUDINARY_CLOUD_NAME, p.cloudinary_public_id, 'f_auto,q_auto,w_220,h_150,c_fill')
     : null,
 }));
+
+const comets = (cometRows ?? []).map((t) => ({
+  id: t.id,
+  body: t.body,
+  place: t.place ?? '',
+  lat: t.lat,
+  lng: t.lng,
+}));
+
+// Optional focus: /map?focus=lat,lng&comet=id
+const focusRaw = (Astro.url.searchParams.get('focus') ?? '').split(',').map(Number);
+const focus = focusRaw.length === 2 && focusRaw.every(Number.isFinite)
+  ? { lat: focusRaw[0], lng: focusRaw[1], comet: Number(Astro.url.searchParams.get('comet')) || null }
+  : null;
 ---
 <Layout title="Map · OGENEO" active="map">
   <h1>Where the Moments happened</h1>
   <div id="map"></div>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script is:inline define:vars={{ points }}>
+  <script is:inline define:vars={{ points, comets, focus }}>
     const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
     const map = L.map('map', { scrollWheelZoom: false });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19,
     }).addTo(map);
-    if (points.length) {
-      const group = L.featureGroup(
-        points.map((p) => {
-          const img = p.thumb
-            ? `<a href="/moments/${p.id}"><img src="${esc(p.thumb)}" alt="" style="width:220px;height:150px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px;"></a>`
-            : '';
-          return L.circleMarker([p.lat, p.lng], {
-            radius: 7, color: '#c9a468', fillColor: '#c9a468', fillOpacity: 0.75, weight: 1,
-          }).bindPopup(
-            `${img}<a href="/moments/${p.id}" style="font-family:Georgia,serif;font-size:15px;">${esc(p.caption)}</a>` +
-            (p.place ? `<br><small>${esc(p.place)}</small>` : ''),
-            { maxWidth: 240 }
-          );
-        })
-      ).addTo(map);
-      map.fitBounds(group.getBounds().pad(0.25));
+
+    const markers = [];
+    for (const p of points) {
+      const img = p.thumb
+        ? `<a href="/moments/${p.id}"><img src="${esc(p.thumb)}" alt="" style="width:220px;height:150px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px;"></a>`
+        : '';
+      markers.push(
+        L.circleMarker([p.lat, p.lng], {
+          radius: 7, color: '#c9a468', fillColor: '#c9a468', fillOpacity: 0.75, weight: 1,
+        }).bindPopup(
+          `${img}<a href="/moments/${p.id}" style="font-family:Georgia,serif;font-size:15px;">${esc(p.caption)}</a>` +
+          (p.place ? `<br><small>${esc(p.place)}</small>` : ''),
+          { maxWidth: 240 }
+        )
+      );
+    }
+
+    const cometMarkers = new Map();
+    for (const t of comets) {
+      const m = L.circleMarker([t.lat, t.lng], {
+        radius: 7, color: '#8a3448', fillColor: '#8a3448', fillOpacity: 0.8, weight: 1,
+      }).bindPopup(
+        `<div style="font-family:'Caveat',cursive;font-size:21px;line-height:1.2;">${esc(t.body)}</div>` +
+        (t.place ? `<small>${esc(t.place)}</small>` : ''),
+        { maxWidth: 240 }
+      );
+      markers.push(m);
+      cometMarkers.set(t.id, m);
+    }
+
+    if (markers.length) {
+      const group = L.featureGroup(markers).addTo(map);
+      if (focus) {
+        map.setView([focus.lat, focus.lng], 13);
+        const fm = focus.comet && cometMarkers.get(focus.comet);
+        if (fm) setTimeout(() => fm.openPopup(), 300);
+      } else {
+        map.fitBounds(group.getBounds().pad(0.25));
+      }
     } else {
       map.setView([20, 0], 2);
     }

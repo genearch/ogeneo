@@ -35,6 +35,9 @@ export interface Thought {
   id: number;
   body: string;
   created_at: string;
+  lat: number | null;
+  lng: number | null;
+  place: string | null;
 }
 
 export interface Wandering {

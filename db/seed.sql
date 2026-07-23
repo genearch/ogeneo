@@ -14,10 +14,10 @@ INSERT INTO moments (captured_at, source, caption, camera_make, camera_model, la
 ('2026-07-19T18:40:00Z', 'meta', 'Hands on the wheel, eyes on this.', 'Meta', 'Ray-Ban Meta', 38.9850, -123.3500, 'Highway 128', 'samples/landscapes/architecture-signs', 1280, 853, '["first-person","drive"]', 0, 2),
 ('2026-07-21T08:15:00Z', 'iphone', 'Home. The garden survived without me, barely.', 'Apple', 'iPhone 16 Pro', NULL, NULL, NULL, 'samples/food/spices', 1024, 683, '["home","garden"]', 0, NULL);
 
-INSERT INTO thoughts (body, created_at) VALUES
-('The best part of a trip is the hour after you stop taking pictures of it.', '2026-07-18T21:00:00Z'),
-('Fog is just a cloud that showed up early.', '2026-07-18T08:00:00Z'),
-('63 years in and I still cannot pack light.', '2026-07-17T19:30:00Z');
+INSERT INTO thoughts (body, created_at, lat, lng, place) VALUES
+('The best part of a trip is the hour after you stop taking pictures of it.', '2026-07-18T21:00:00Z', 39.3076, -123.7995, 'Mendocino, CA'),
+('Fog is just a cloud that showed up early.', '2026-07-18T08:00:00Z', 39.3055, -123.7990, 'Mendocino, CA'),
+('63 years in and I still cannot pack light.', '2026-07-17T19:30:00Z', NULL, NULL, NULL);
 
 INSERT INTO settings (key, value) VALUES
 ('currently_wandering', '{"place":"Home base","note":"Planning the next one.","since":"2026-07-21"}');
