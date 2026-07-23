@@ -1,7 +1,7 @@
 ---
 interface Props {
   title?: string;
-  active?: 'home' | 'map' | 'collections' | 'search';
+  active?: 'home' | 'map' | 'collections' | 'search' | 'about';
 }
 const { title = 'OGENEO', active = 'home' } = Astro.props;
 ---
@@ -29,15 +29,19 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
           <a href="/" class:list={[{ active: active === 'home' }]}>Home</a>
           <a href="/map" class:list={[{ active: active === 'map' }]}>Map</a>
           <a href="/experiences" class:list={[{ active: active === 'collections' }]}>Collections</a>
-          <a href="/search" class:list={[{ active: active === 'search' }]}>Search</a>
+          <a href="/about" class:list={[{ active: active === 'about' }]}>About</a>
         </nav>
-        <a class="avatar" href="/" aria-label="Profile">G</a>
+        <form class="header-search" method="get" action="/search">
+          <input type="search" name="q" placeholder="Search moments..." aria-label="Search moments" />
+        </form>
+        <a class="avatar" href="/about" aria-label="About Gene">G</a>
       </div>
       <nav class="mobile-menu" aria-label="Menu">
         <a href="/">Home</a>
         <a href="/map">Map</a>
         <a href="/experiences">Collections</a>
         <a href="/search">Search</a>
+        <a href="/about">About</a>
       </nav>
     </header>
 
@@ -71,9 +75,10 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
 
 <style is:global>
   :root {
-    --bg: #100c0a;
-    --card: #1e1713;
-    --card-edge: #2b211b;
+    --bg: #131010;
+    --card: #1e1815;
+    --card-thought: #2a1c1f;
+    --card-edge: #2c221c;
     --text: #efe7dc;
     --text-dim: #99897b;
     --gold: #c9a468;
@@ -96,16 +101,17 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   }
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
+  input { font-family: var(--serif); }
 
   .site-header {
     position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--card-edge);
   }
   .header-inner {
-    max-width: 1060px; margin: 0 auto; padding: 12px 18px;
-    display: flex; align-items: center; gap: 18px;
+    max-width: 1180px; margin: 0 auto; padding: 14px 20px;
+    display: flex; align-items: center; gap: 26px;
   }
   .hamburger {
     display: none;
@@ -113,18 +119,28 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   }
   .hamburger svg { width: 24px; height: 24px; }
   .wordmark {
+    display: none;
     font-family: var(--display);
-    font-size: 27px; font-weight: 500;
+    font-size: 24px; font-weight: 500;
     letter-spacing: 0.32em; text-indent: 0.32em;
     color: var(--gold);
   }
-  .top-nav { display: flex; gap: 26px; font-size: 16px; color: var(--text-dim); margin-left: auto; }
-  .top-nav a.active, .top-nav a:hover { color: var(--gold); }
+  .top-nav { display: flex; gap: 30px; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+  .top-nav a { padding-bottom: 5px; border-bottom: 2px solid transparent; }
+  .top-nav a.active { color: var(--text); border-bottom-color: var(--burgundy-bright); }
+  .top-nav a:hover { color: var(--gold); }
+  .header-search { margin-left: auto; }
+  .header-search input {
+    background: var(--card); border: 1px solid var(--card-edge);
+    border-radius: 999px; padding: 9px 18px; color: var(--text);
+    font-size: 15px; width: 230px;
+  }
+  .header-search input:focus { outline: none; border-color: var(--gold); }
   .avatar {
-    width: 34px; height: 34px; border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, var(--burgundy), var(--gold));
-    color: var(--text); font-family: var(--display); font-size: 18px;
+    color: var(--text); font-family: var(--display); font-size: 19px;
     border: 1px solid var(--card-edge);
     flex: 0 0 auto;
   }
@@ -137,7 +153,7 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   .mobile-menu a { padding: 9px 0; color: var(--text-dim); font-size: 17px; }
   body.menu-open .mobile-menu { display: flex; }
 
-  .page { max-width: 1060px; margin: 0 auto; padding: 18px 16px 104px; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 18px 16px 104px; }
 
   .tab-bar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
@@ -168,12 +184,13 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   .tab-bar .add-btn svg { width: 26px; height: 26px; }
 
   @media (max-width: 720px) {
-    .top-nav { display: none; }
+    .top-nav, .header-search { display: none; }
     .tab-bar { display: flex; }
     .hamburger { display: block; }
-    .header-inner { justify-content: space-between; }
-    .wordmark { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); }
-    .header-inner { position: relative; }
+    .wordmark { display: block; font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); }
+    .header-inner { justify-content: space-between; position: relative; }
+    .avatar { width: 34px; height: 34px; font-size: 17px; }
+    .page { padding-bottom: 110px; }
   }
   @media (min-width: 721px) {
     .mobile-menu { display: none !important; }
@@ -182,11 +199,11 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   /* Shared bits */
   .glyph {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 30px; height: 23px; border-radius: 6px;
-    background: color-mix(in srgb, var(--bg) 62%, transparent);
-    border: 1px solid color-mix(in srgb, var(--card-edge) 70%, var(--gold) 30%);
+    width: 34px; height: 27px; border-radius: 7px;
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--card-edge) 60%, var(--gold) 40%);
     color: var(--gold);
   }
-  .glyph svg { width: 17px; height: 12px; }
+  .glyph svg { width: 18px; height: 13px; }
   .muted { color: var(--text-dim); }
 </style>

@@ -7,12 +7,14 @@ const when = new Date(thought.created_at).toLocaleDateString('en-US', {
 });
 ---
 <div class="thought-card">
-  <span class="star" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-      <path d="M12 3l2.2 5.4L20 9l-4.4 3.8L17 19l-5-3.2L7 19l1.4-6.2L4 9l5.8-.6z" />
+  <span class="comet" aria-hidden="true">
+    <svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M20 4l1.6 3.9L26 8.3l-3.2 2.7 1 4.4-3.8-2.3-3.8 2.3 1-4.4L14 8.3l4.4-.4z" />
+      <path d="M12 14 4 20M14 17l-5 4M10 11 2 16" stroke-linecap="round" />
     </svg>
   </span>
   <p class="body">{thought.body}</p>
+  <p class="sig">Gene</p>
   <p class="meta muted">
     {context && <span>{context}</span>}
     <span>{when}</span>
@@ -21,24 +23,30 @@ const when = new Date(thought.created_at).toLocaleDateString('en-US', {
 
 <style>
   .thought-card {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 10px;
+    display: flex; flex-direction: column;
+    background: var(--card-thought);
+    border: 1px solid color-mix(in srgb, var(--burgundy) 40%, var(--card-edge));
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    height: 100%;
   }
-  .star { color: var(--gold); flex: 0 0 auto; }
-  .star svg { width: 24px; height: 24px; }
+  .comet { color: var(--gold); margin-bottom: 10px; }
+  .comet svg { width: 34px; height: 26px; }
   .body {
     margin: 0; flex: 1;
     font-family: var(--hand);
-    font-size: 25px; line-height: 1.2;
+    font-size: 26px; line-height: 1.22;
     color: var(--text);
   }
-  .meta {
-    margin: 0; text-align: right; font-size: 13px;
-    display: flex; flex-direction: column; gap: 2px; flex: 0 0 auto;
-    max-width: 40%;
+  .sig {
+    margin: 10px 0 0; text-align: right;
+    font-family: var(--hand); font-size: 22px; color: var(--text-dim);
   }
-  @media (min-width: 721px) {
-    .body { font-size: 28px; }
-    .meta { font-size: 14px; }
+  .meta { margin: 8px 0 0; font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
+  @media (max-width: 720px) {
+    .thought-card { padding: 12px 12px 11px; border-radius: 12px; }
+    .body { font-size: 21px; }
+    .sig { font-size: 18px; margin-top: 6px; }
+    .meta { font-size: 11.5px; }
   }
 </style>

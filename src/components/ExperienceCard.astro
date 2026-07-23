@@ -9,7 +9,12 @@ const range = fmt(e.start_at) === fmt(e.end_at) ? fmt(e.start_at) : `${fmt(e.sta
 ---
 <a class="exp-card" href={`/experiences/${e.id}`}>
   {e.cover_public_id && (
-    <img src={imgUrl(cloudName, e.cover_public_id, 'f_auto,q_auto,w_800,h_450,c_fill')} alt={e.title} loading="lazy" width="800" height="450" />
+    <div class="thumb">
+      <img src={imgUrl(cloudName, e.cover_public_id, 'f_auto,q_auto,w_640,h_640,c_fill')} alt={e.title} loading="lazy" width="640" height="640" />
+      <span class="badge glyph" title="Experience">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M7 8V6h10v2M9 6V4h6v2"/></svg>
+      </span>
+    </div>
   )}
   <div class="body">
     <p class="kicker muted">Experience · {range} · {e.moment_count ?? 0} moments</p>
@@ -20,14 +25,26 @@ const range = fmt(e.start_at) === fmt(e.end_at) ? fmt(e.start_at) : `${fmt(e.sta
 
 <style>
   .exp-card {
-    display: block; background: var(--card);
-    border: 1px solid var(--card-edge); border-radius: 14px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--gold) 30%, var(--card-edge));
+    border-radius: 14px; overflow: hidden;
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
-  .exp-card:hover { border-color: var(--gold); transform: translateY(-1px); }
-  .exp-card img { width: 100%; aspect-ratio: 16/7; object-fit: cover; }
-  .body { padding: 16px 18px 18px; }
-  .kicker { margin: 0 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; }
-  .title { margin: 0; font-family: var(--display); font-size: 27px; color: var(--gold); }
-  .summary { margin: 6px 0 0; font-size: 16px; }
+  .exp-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .thumb { position: relative; }
+  .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .badge { position: absolute; top: 10px; left: 10px; }
+  .badge svg { width: 16px; height: 14px; }
+  .body { padding: 12px 14px 14px; }
+  .kicker { margin: 0 0 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .title { margin: 0; font-family: var(--display); font-size: 22px; color: var(--gold); line-height: 1.15; }
+  .summary { margin: 6px 0 0; font-size: 14.5px; }
+  @media (max-width: 720px) {
+    .exp-card { border-radius: 12px; }
+    .body { padding: 9px 10px 11px; }
+    .kicker { font-size: 10px; }
+    .title { font-size: 18px; }
+    .summary { display: none; }
+  }
 </style>

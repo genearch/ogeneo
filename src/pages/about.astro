@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="About · OGENEO" active="about">
+  <div class="about">
+    <h1>A personal glimpse into my life.</h1>
+    <p class="sub">The world through my eyes. My thoughts along the way.</p>
+    <p class="muted">
+      OgeneO is a private-first visual journal built around Moments rather than
+      albums. Photos arrive straight from a phone's share sheet, first-person
+      captures from Meta glasses carry their own glyph, and related Moments
+      gather themselves into Experiences by time and place. Thoughts drift
+      through the feed as handwritten comets.
+    </p>
+    <p class="sig">Gene</p>
+  </div>
+</Layout>
+
+<style>
+  .about { max-width: 620px; margin: 8vh auto 0; padding: 0 12px; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: 40px; margin: 0 0 10px; }
+  .sub { font-family: var(--hand); font-size: 26px; color: var(--text-dim); margin: 0 0 22px; }
+  .about p.muted { font-size: 18px; line-height: 1.6; }
+  .sig { font-family: var(--hand); font-size: 30px; color: var(--gold); margin-top: 26px; }
+</style>
