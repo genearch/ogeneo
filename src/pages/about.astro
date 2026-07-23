@@ -13,6 +13,72 @@ import Layout from '../layouts/Layout.astro';
       through the feed as handwritten comets.
     </p>
     <p class="sig">Gene</p>
+
+    <details class="hood">
+      <summary>
+        <span class="car" aria-hidden="true">
+          <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- body -->
+            <path d="M4 24 h4 M18 24 h20 M52 24 h6 c1 0 2-1 2-2 v-4 c0-2-2-3-4-3 l-10-1 -7-6 H22 l-6 6 -8 1 c-2 0.3-4 1.5-4 3.5 V22 c0 1 1 2 2 2" />
+            <!-- open hood -->
+            <path d="M40 8 L54 2 M40 8 l12.5 5.5" />
+            <!-- wheels -->
+            <circle cx="13" cy="24" r="4.5" />
+            <circle cx="45" cy="24" r="4.5" />
+            <!-- engine sparkle -->
+            <path d="M46 8.5 l1 -2 1 2 2 .5 -2 1 -.5 2 -1.2 -1.7 -2 .2 z" stroke-width="1" />
+          </svg>
+        </span>
+        <span class="label">Want to look under the hood?</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+
+      <div class="engine">
+        <h2>The pipeline</h2>
+        <p>
+          Share Sheet → iPhone Shortcut → Cloudflare Worker → Cloudinary →
+          Apollo → this site. A photo shared from the camera roll posts to
+          <code>/api/upload</code> with its original file and metadata; the
+          Worker uploads the media to Cloudinary, enriches it, writes a Moment
+          to the database, and it's live before the phone is back in the
+          pocket. Comets travel a parallel lane through <code>/api/thought</code>,
+          carrying GPS from the phone so each one can drop a pin.
+        </p>
+
+        <h2>The stack</h2>
+        <p>
+          The site is Astro rendered server-side on Cloudflare Workers, one
+          worker for pages and API both. Data lives in Cloudflare D1, SQLite
+          running at the edge. Media lives in Cloudinary and is delivered
+          resized and format-negotiated (<code>f_auto,q_auto</code>) per
+          device. Uploads authenticate with a bearer secret; media uploads are
+          SHA-1 signed. The maps are Leaflet over CARTO dark tiles. Source
+          lives on <a href="https://github.com/genearch/ogeneo">GitHub</a>,
+          and every deploy is a <code>wrangler deploy</code> from main.
+        </p>
+
+        <h2>Apollo, the enrichment engine</h2>
+        <p>
+          Apollo is the journal's small brain. When a Moment lands, it reads
+          the metadata the Shortcut sends — capture time, GPS, camera make and
+          model, filename, caption — then infers tags from the caption, flags
+          Lily appearances, and marks Meta glasses captures as first-person
+          "Through My Eyes" Moments. Its main trick is grouping: a Moment
+          within 8 hours and 30 km of related Moments joins their Experience;
+          two loose Moments that close together found a new one, titled from
+          place and date. V1 is honest arithmetic; the upgrade path is Workers
+          AI reading captions, weather, and travel patterns.
+        </p>
+
+        <h2>The easter eggs</h2>
+        <p>
+          Anniversary resurfacing (a past year's Moment returns on its date),
+          journey milestones at 10, 25, 50, 100+ Moments, rolling thought
+          comets interleaved through the feed, and a Currently Wandering card
+          driven by a settings row in D1.
+        </p>
+      </div>
+    </details>
   </div>
 </Layout>
 
@@ -20,6 +86,33 @@ import Layout from '../layouts/Layout.astro';
   .about { max-width: 620px; margin: 8vh auto 0; padding: 0 12px; }
   h1 { font-family: var(--display); font-weight: 500; font-size: 40px; margin: 0 0 10px; }
   .sub { font-family: var(--hand); font-size: 26px; color: var(--text-dim); margin: 0 0 22px; }
-  .about p.muted { font-size: 18px; line-height: 1.6; }
+  .about > p.muted { font-size: 18px; line-height: 1.6; }
   .sig { font-family: var(--hand); font-size: 30px; color: var(--gold); margin-top: 26px; }
+
+  .hood { margin: 40px 0 60px; border-top: 1px solid var(--card-edge); padding-top: 26px; }
+  .hood summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 14px;
+    color: var(--text-dim);
+  }
+  .hood summary::-webkit-details-marker { display: none; }
+  .hood summary:hover { color: var(--gold); }
+  .car { color: var(--gold); flex: 0 0 auto; display: inline-flex; }
+  .car svg { width: 58px; height: 30px; }
+  .label { font-family: var(--hand); font-size: 25px; }
+  .chev { width: 20px; height: 20px; margin-left: auto; transition: transform 0.2s ease; }
+  .hood[open] .chev { transform: rotate(180deg); }
+
+  .engine { padding: 8px 4px 0; }
+  .engine h2 {
+    font-family: var(--display); font-weight: 500; font-size: 23px;
+    color: var(--gold); margin: 26px 0 6px;
+  }
+  .engine p { margin: 0; font-size: 16.5px; line-height: 1.65; color: var(--text-dim); }
+  .engine a { color: var(--gold); border-bottom: 1px dotted var(--gold); }
+  .engine code {
+    font-size: 14.5px; color: var(--text);
+    background: var(--card); border: 1px solid var(--card-edge);
+    border-radius: 5px; padding: 1px 6px;
+  }
 </style>
