@@ -23,7 +23,7 @@ if (q) {
     .map((_, i) => `(body LIKE ?${i + 1} OR place LIKE ?${i + 1})`)
     .join(' AND ');
   const expCond = words
-    .map((_, i) => `(title LIKE ?${i + 1} OR summary LIKE ?${i + 1} OR place LIKE ?${i + 1})`)
+    .map((_, i) => `(e.title LIKE ?${i + 1} OR e.summary LIKE ?${i + 1} OR e.place LIKE ?${i + 1})`)
     .join(' AND ');
   const likes = words.map((w) => `%${w}%`);
 
