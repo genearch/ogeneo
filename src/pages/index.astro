@@ -100,11 +100,11 @@ const nextHref = `/?${filter === 'all' ? '' : `filter=${filter}&`}page=${page + 
 <Layout active="home">
   {filter === 'all' && page === 1 && <Hero />}
 
-  <FilterChips current={filter} />
-
   {wandering && filter === 'all' && page === 1 && (
-    <div class="wide"><WanderingCard wandering={wandering} weather={weather} stats={wanderStats} /></div>
+    <WanderingCard wandering={wandering} weather={weather} stats={wanderStats} />
   )}
+
+  <FilterChips current={filter} />
 
   {milestone && page === 1 && (
     <div class="wide milestone">
