@@ -14,39 +14,42 @@ const when = new Date(thought.created_at).toLocaleDateString('en-US', {
     </svg>
   </span>
   <p class="body">{thought.body}</p>
-  <p class="sig">Gene</p>
-  <p class="meta muted">
-    {context && <span>{context}</span>}
-    <span>{when}</span>
-  </p>
+  <div class="foot">
+    <p class="meta muted">
+      {context && <span>{context}</span>}
+      <span>{when}</span>
+    </p>
+    <p class="sig">Gene</p>
+  </div>
 </div>
 
 <style>
   .thought-card {
     display: flex; flex-direction: column;
+    aspect-ratio: 1;
     background: var(--card-thought);
     border: 1px solid color-mix(in srgb, var(--burgundy) 40%, var(--card-edge));
     border-radius: 14px;
-    padding: 16px 16px 14px;
-    height: 100%;
+    padding: 15px 15px 12px;
+    overflow: hidden;
   }
-  .comet { color: var(--gold); margin-bottom: 10px; }
-  .comet svg { width: 34px; height: 26px; }
+  .comet { color: var(--gold); margin-bottom: 8px; flex: 0 0 auto; }
+  .comet svg { width: 32px; height: 24px; }
   .body {
-    margin: 0; flex: 1;
+    margin: 0; flex: 1; min-height: 0;
     font-family: var(--hand);
-    font-size: 26px; line-height: 1.22;
+    font-size: 25px; line-height: 1.2;
     color: var(--text);
+    overflow: hidden;
   }
-  .sig {
-    margin: 10px 0 0; text-align: right;
-    font-family: var(--hand); font-size: 22px; color: var(--text-dim);
-  }
-  .meta { margin: 8px 0 0; font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
+  .foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; flex: 0 0 auto; }
+  .meta { margin: 0; font-size: 12.5px; display: flex; flex-direction: column; gap: 1px; }
+  .sig { margin: 0; font-family: var(--hand); font-size: 21px; color: var(--text-dim); }
   @media (max-width: 720px) {
-    .thought-card { padding: 12px 12px 11px; border-radius: 12px; }
-    .body { font-size: 21px; }
-    .sig { font-size: 18px; margin-top: 6px; }
-    .meta { font-size: 11.5px; }
+    .thought-card { padding: 11px 11px 9px; border-radius: 12px; }
+    .comet svg { width: 26px; height: 20px; }
+    .body { font-size: 19px; }
+    .sig { font-size: 17px; }
+    .meta { font-size: 10.5px; }
   }
 </style>

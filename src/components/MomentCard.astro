@@ -14,19 +14,17 @@ const when = isToday
 ---
 <a class="moment-card" href={`/moments/${moment.id}`}>
   {moment.cloudinary_public_id && (
-    <div class="thumb">
-      <img
-        src={imgUrl(cloudName, moment.cloudinary_public_id, 'f_auto,q_auto,w_640,h_640,c_fill')}
-        alt={moment.caption ?? 'Moment'}
-        loading="lazy"
-        width="640" height="640"
-      />
-      <span class="badge"><SourceGlyph source={moment.source} /></span>
-    </div>
+    <img
+      src={imgUrl(cloudName, moment.cloudinary_public_id, 'f_auto,q_auto,w_640,h_640,c_fill')}
+      alt={moment.caption ?? 'Moment'}
+      loading="lazy"
+      width="640" height="640"
+    />
   )}
-  <div class="body">
+  <span class="badge"><SourceGlyph source={moment.source} /></span>
+  <div class="overlay">
     <p class="caption">{moment.caption ?? 'Untitled moment'}</p>
-    <p class="meta muted">
+    <p class="meta">
       {moment.place && <span>{moment.place}</span>}
       <span>{when}</span>
     </p>
@@ -35,7 +33,9 @@ const when = isToday
 
 <style>
   .moment-card {
-    display: flex; flex-direction: column;
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
     background: var(--card);
     border: 1px solid color-mix(in srgb, var(--card-edge) 60%, transparent);
     border-radius: 14px;
@@ -43,17 +43,24 @@ const when = isToday
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
   .moment-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-  .thumb { position: relative; }
-  .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .moment-card img { width: 100%; height: 100%; object-fit: cover; }
   .badge { position: absolute; top: 10px; left: 10px; }
-  .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .caption { margin: 0; font-size: 18px; line-height: 1.32; }
-  .meta { margin: auto 0 0; display: flex; flex-direction: column; gap: 1px; font-size: 13.5px; padding-top: 4px; }
+  .overlay {
+    position: absolute; inset: auto 0 0 0;
+    padding: 34px 13px 11px;
+    background: linear-gradient(to top, rgba(10,7,6,0.92) 0%, rgba(10,7,6,0.65) 55%, transparent 100%);
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .caption {
+    margin: 0; font-size: 17px; line-height: 1.28; color: var(--text);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .meta { margin: 0; display: flex; flex-wrap: wrap; column-gap: 10px; font-size: 12.5px; color: color-mix(in srgb, var(--text-dim) 80%, #fff); }
   @media (max-width: 720px) {
     .moment-card { border-radius: 12px; }
     .badge { top: 7px; left: 7px; }
-    .body { padding: 9px 10px 11px; gap: 4px; }
-    .caption { font-size: 15px; }
-    .meta { font-size: 12px; }
+    .overlay { padding: 26px 10px 9px; }
+    .caption { font-size: 14px; }
+    .meta { font-size: 11px; }
   }
 </style>
