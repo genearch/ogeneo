@@ -1,9 +1,30 @@
 ---
+import WanderingCard from '../components/WanderingCard.astro';
+import { getWeather, getWanderStats, type WanderState } from '../lib/wander';
+import type { Env } from '../lib/types';
+
 interface Props {
   title?: string;
   active?: 'home' | 'map' | 'collections' | 'search' | 'about';
 }
 const { title = 'OGENEO', active = 'home' } = Astro.props;
+
+// Currently Wandering lives in the header now, so every page fetches it.
+const env = Astro.locals.runtime.env as Env;
+let wandering: WanderState | null = null;
+let weather = null;
+let wanderStats = null;
+try {
+  const row = await env.DB.prepare(`SELECT value FROM settings WHERE key = 'currently_wandering'`).first<{ value: string }>();
+  wandering = row ? JSON.parse(row.value) : null;
+  if (wandering) {
+    if (wandering.lat != null && wandering.lng != null) {
+      weather = await getWeather(wandering.lat, wandering.lng);
+      if (weather?.timezone && !wandering.timezone) wandering.timezone = weather.timezone;
+    }
+    wanderStats = await getWanderStats(env, wandering);
+  }
+} catch { /* header shouldn't break the page over this */ }
 ---
 <!doctype html>
 <html lang="en">
@@ -21,7 +42,12 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   <body>
     <header class="site-header">
       <div class="header-inner">
-        <a class="wordmark" href="/">OGENEO</a>
+        <div class="brand">
+          <a class="avatar" href="/about" aria-label="About Gene">
+            <img src="/avatar.png" alt="Gene" width="76" height="76" />
+          </a>
+          <a class="wordmark" href="/">OGENEO</a>
+        </div>
         <nav class="top-nav" aria-label="Primary">
           <a href="/" class:list={[{ active: active === 'home' }]}>Home</a>
           <a href="/map" class:list={[{ active: active === 'map' }]}>Map</a>
@@ -31,9 +57,9 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
         <form class="header-search" method="get" action="/search">
           <input type="search" name="q" placeholder="Search moments..." aria-label="Search moments" />
         </form>
-        <a class="avatar" href="/about" aria-label="About Gene">
-          <img src="/avatar.png" alt="Gene" width="76" height="76" />
-        </a>
+        {wandering && (
+          <WanderingCard wandering={wandering} weather={weather} stats={wanderStats} />
+        )}
       </div>
     </header>
 
@@ -102,15 +128,15 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
     border-bottom: 1px solid var(--card-edge);
   }
   .header-inner {
-    max-width: 1180px; margin: 0 auto; padding: 14px 20px;
+    max-width: 1180px; margin: 0 auto; padding: 12px 20px;
     display: flex; align-items: center; gap: 26px;
   }
+  .brand { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
   .wordmark {
     font-family: var(--display);
     font-size: 23px; font-weight: 500;
     letter-spacing: 0.3em; text-indent: 0.3em;
     color: var(--gold);
-    flex: 0 0 auto;
   }
   .top-nav { display: flex; gap: 30px; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
   .top-nav a { padding-bottom: 5px; border-bottom: 2px solid transparent; }
@@ -120,7 +146,7 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   .header-search input {
     background: var(--card); border: 1px solid var(--card-edge);
     border-radius: 999px; padding: 9px 18px; color: var(--text);
-    font-size: 15px; width: 230px;
+    font-size: 15px; width: 210px;
   }
   .header-search input:focus { outline: none; border-color: var(--gold); }
   .avatar {
@@ -165,7 +191,8 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
     .top-nav, .header-search { display: none; }
     .tab-bar { display: flex; }
     .header-inner { justify-content: space-between; }
-    .avatar { width: 34px; height: 34px; font-size: 17px; }
+    .avatar { width: 34px; height: 34px; }
+    .wordmark { font-size: 21px; }
     .page { padding-bottom: 110px; }
   }
 

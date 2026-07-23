@@ -5,8 +5,6 @@ import FilterChips from '../components/FilterChips.astro';
 import MomentCard from '../components/MomentCard.astro';
 import ThoughtCard from '../components/ThoughtCard.astro';
 import ExperienceCard from '../components/ExperienceCard.astro';
-import WanderingCard from '../components/WanderingCard.astro';
-import { getWeather, getWanderStats, type WanderState } from '../lib/wander';
 import type { Env, Moment, Thought, Experience } from '../lib/types';
 
 const env = Astro.locals.runtime.env as Env;
@@ -24,7 +22,7 @@ const showMoments = filter !== 'thoughts' && filter !== 'experiences';
 const showThoughts = filter === 'all' || filter === 'thoughts';
 const showExperiences = filter === 'all' || filter === 'experiences';
 
-const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes, heroRow] =
+const [momentsRes, thoughtsRes, experiencesRes, countRow, annivRes, heroRow] =
   await Promise.all([
     showMoments
       ? env.DB.prepare(`SELECT * FROM moments ${momentWhere} ORDER BY captured_at DESC LIMIT ${PAGE_SIZE + 1} OFFSET ${offset}`).all<Moment>()
@@ -42,7 +40,6 @@ const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes, h
            GROUP BY e.id ORDER BY e.start_at DESC LIMIT 8`
         ).all<Experience>()
       : Promise.resolve({ results: [] as Experience[] }),
-    env.DB.prepare(`SELECT value FROM settings WHERE key = 'currently_wandering'`).first<{ value: string }>(),
     env.DB.prepare(`SELECT COUNT(*) AS n FROM moments`).first<{ n: number }>(),
     env.DB.prepare(
       `SELECT * FROM moments
@@ -61,18 +58,6 @@ const hasMore = allMoments.length > PAGE_SIZE;
 const moments = allMoments.slice(0, PAGE_SIZE);
 const thoughts = thoughtsRes.results ?? [];
 const experiences = experiencesRes.results ?? [];
-let wandering: WanderState | null = null;
-try { wandering = wanderRow ? JSON.parse(wanderRow.value) : null; } catch { /* ignore */ }
-
-let weather = null;
-let wanderStats = null;
-if (wandering && filter === 'all' && page === 1) {
-  if (wandering.lat != null && wandering.lng != null) {
-    weather = await getWeather(wandering.lat, wandering.lng);
-    if (weather?.timezone && !wandering.timezone) wandering.timezone = weather.timezone;
-  }
-  wanderStats = await getWanderStats(env, wandering);
-}
 const totalMoments = countRow?.n ?? 0;
 const milestone = [10, 25, 50, 100, 250, 500, 1000].includes(totalMoments) ? totalMoments : null;
 
@@ -103,10 +88,6 @@ const nextHref = `/?${filter === 'all' ? '' : `filter=${filter}&`}page=${page + 
 ---
 <Layout active="home">
   {filter === 'all' && page === 1 && <Hero hero={heroSettings} cloudName={cloudName} />}
-
-  {wandering && filter === 'all' && page === 1 && (
-    <WanderingCard wandering={wandering} weather={weather} stats={wanderStats} />
-  )}
 
   <FilterChips current={filter} />
 

@@ -14,7 +14,7 @@ const flag = wandering.country && /^[A-Za-z]{2}$/.test(wandering.country)
   : null;
 ---
 <div class="wander-line" id="wander-line" data-tz={wandering.timezone ?? ''}>
-  <span class="wl-label">Currently wandering</span>
+  <span class="wl-label">Currently<br />wandering</span>
   <button class="pin" id="wander-pin" aria-label="Where is Gene right now?" aria-expanded="false" title="Psst. Click the pin.">
     📍
   </button>
@@ -74,23 +74,24 @@ const flag = wandering.country && /^[A-Za-z]{2}$/.test(wandering.country)
 <style>
   .wander-line {
     position: relative;
-    display: flex; align-items: center; justify-content: flex-end; gap: 7px;
-    margin: 0 2px 10px;
+    display: flex; align-items: center; gap: 6px;
+    margin-left: auto;
+    flex: 0 0 auto;
   }
   .wl-label {
-    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--gold);
+    font-size: 10.5px; line-height: 1.25; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); text-align: right; white-space: nowrap;
   }
   .pin {
     background: none; border: none; cursor: pointer;
-    font-size: 17px; line-height: 1; padding: 4px;
+    font-size: 19px; line-height: 1; padding: 4px;
     transition: transform 0.18s ease;
   }
   .pin:hover { transform: translateY(-2px) rotate(-8deg); }
   .pin.dropped { transform: translateY(1px); }
   .pop {
-    position: absolute; top: calc(100% + 8px); right: 0; z-index: 20;
-    width: min(320px, 88vw);
+    position: absolute; top: calc(100% + 12px); right: 0; z-index: 20;
+    width: min(300px, 88vw);
     background: linear-gradient(135deg, var(--card-thought), color-mix(in srgb, var(--burgundy) 32%, var(--card)));
     border: 1px solid color-mix(in srgb, var(--burgundy-bright) 55%, var(--card-edge));
     border-radius: 14px;
@@ -104,4 +105,9 @@ const flag = wandering.country && /^[A-Za-z]{2}$/.test(wandering.country)
   .stats { border-top: 1px solid color-mix(in srgb, var(--burgundy-bright) 35%, transparent); margin-top: 12px; padding-top: 10px; }
   .stats p { margin: 3px 0 0; font-size: 14.5px; color: var(--text-dim); }
   .stats strong { color: var(--gold); font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .wl-label { display: none; }
+    .pop { right: -8px; }
+  }
 </style>
