@@ -1,9 +1,28 @@
+---
+import { imgUrl } from '../lib/cloudinary';
+interface Props {
+  hero?: { title?: string; sub?: string; image_public_id?: string } | null;
+  cloudName?: string;
+}
+const { hero = null, cloudName } = Astro.props;
+const title = hero?.title ?? 'A personal glimpse\ninto my life.';
+const sub = hero?.sub ?? 'The world through my eyes. My thoughts along the way.';
+const titleLines = title.split('\n');
+---
 <section class="hero">
   <div class="copy">
-    <h1>A personal glimpse<br />into my life.</h1>
-    <p class="sub">The world through my eyes. My thoughts along the way.</p>
+    <h1>{titleLines.map((line, i) => <>{i > 0 && <br />}{line}</>)}</h1>
+    <p class="sub">{sub}</p>
     <div class="divider"><span></span><i></i><span></span></div>
   </div>
+  {hero?.image_public_id ? (
+    <div class="art photo">
+      <img
+        src={imgUrl(cloudName, hero.image_public_id, 'f_auto,q_auto,w_900,h_560,c_fill')}
+        alt="" width="900" height="560" loading="eager"
+      />
+    </div>
+  ) : (
   <div class="art" aria-hidden="true">
     <svg viewBox="0 0 420 260" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
       <!-- hillside -->
@@ -29,6 +48,7 @@
       <path d="M170 185 h6 v8 h-6 Z M204 182 h5 v7 h-5 Z M244 172 h6 v8 h-6 Z M188 152 h5 v7 h-5 Z M250 138 h6 v7 h-6 Z M232 114 h5 v6 h-5 Z" stroke-width="1" />
     </svg>
   </div>
+  )}
 </section>
 
 <style>
@@ -50,6 +70,10 @@
   .divider i { width: 7px; height: 7px; border-radius: 50%; background: var(--burgundy-bright); }
   .art { color: color-mix(in srgb, var(--text) 55%, transparent); flex: 0 0 400px; }
   .art svg { width: 100%; height: auto; }
+  .art.photo img {
+    width: 100%; height: auto; aspect-ratio: 900 / 560; object-fit: cover;
+    border-radius: 16px; border: 1px solid var(--card-edge);
+  }
   @media (max-width: 960px) { .art { flex-basis: 300px; } h1 { font-size: 42px; } }
   @media (max-width: 720px) {
     .hero { flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 4px 12px; }

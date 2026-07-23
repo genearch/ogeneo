@@ -24,7 +24,7 @@ const showMoments = filter !== 'thoughts' && filter !== 'experiences';
 const showThoughts = filter === 'all' || filter === 'thoughts';
 const showExperiences = filter === 'all' || filter === 'experiences';
 
-const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes] =
+const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes, heroRow] =
   await Promise.all([
     showMoments
       ? env.DB.prepare(`SELECT * FROM moments ${momentWhere} ORDER BY captured_at DESC LIMIT ${PAGE_SIZE + 1} OFFSET ${offset}`).all<Moment>()
@@ -50,7 +50,11 @@ const [momentsRes, thoughtsRes, experiencesRes, wanderRow, countRow, annivRes] =
          AND strftime('%Y', captured_at) < strftime('%Y', 'now')
        ORDER BY captured_at DESC LIMIT 1`
     ).first<Moment>(),
+    env.DB.prepare(`SELECT value FROM settings WHERE key = 'hero'`).first<{ value: string }>(),
   ]);
+
+let heroSettings: { title?: string; sub?: string; image_public_id?: string } | null = null;
+try { heroSettings = heroRow ? JSON.parse(heroRow.value) : null; } catch { /* ignore */ }
 
 const allMoments = momentsRes.results ?? [];
 const hasMore = allMoments.length > PAGE_SIZE;
@@ -98,7 +102,7 @@ if (filter === 'thoughts') {
 const nextHref = `/?${filter === 'all' ? '' : `filter=${filter}&`}page=${page + 1}`;
 ---
 <Layout active="home">
-  {filter === 'all' && page === 1 && <Hero />}
+  {filter === 'all' && page === 1 && <Hero hero={heroSettings} cloudName={cloudName} />}
 
   {wandering && filter === 'all' && page === 1 && (
     <WanderingCard wandering={wandering} weather={weather} stats={wanderStats} />
