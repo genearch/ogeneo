@@ -57,8 +57,9 @@ const points = (results ?? []).map((p) => ({
   h1 { font-family: var(--display); font-weight: 500; font-size: 30px; margin: 4px 0 16px; }
   #map { height: 70dvh; border-radius: 16px; border: 1px solid var(--card-edge); background: var(--card); }
   :global(.leaflet-popup-content-wrapper) {
-    background: #1e1713; color: #efe7dc; border-radius: 12px;
+    background: #1e1713 !important; color: #efe7dc !important; border-radius: 12px !important;
   }
-  :global(.leaflet-popup-content a) { color: #c9a468; }
-  :global(.leaflet-popup-tip) { background: #1e1713; }
+  :global(.leaflet-popup-content a) { color: #c9a468 !important; }
+  :global(.leaflet-popup-tip) { background: #1e1713 !important; }
+  :global(.leaflet-popup-close-button) { color: #99897b !important; }
 </style>
