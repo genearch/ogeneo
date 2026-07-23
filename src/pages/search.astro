@@ -1,29 +1,63 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import MomentCard from '../components/MomentCard.astro';
-import type { Env, Moment } from '../lib/types';
+import ThoughtCard from '../components/ThoughtCard.astro';
+import ExperienceCard from '../components/ExperienceCard.astro';
+import type { Env, Moment, Thought, Experience } from '../lib/types';
 
 const env = Astro.locals.runtime.env as Env;
 const q = (Astro.url.searchParams.get('q') ?? '').trim();
-let results: Moment[] = [];
+
+let moments: Moment[] = [];
+let thoughts: Thought[] = [];
+let experiences: Experience[] = [];
+
 if (q) {
-  const like = `%${q}%`;
-  const res = await env.DB.prepare(
-    `SELECT * FROM moments
-     WHERE caption LIKE ?1 OR place LIKE ?1 OR ai_tags LIKE ?1
-     ORDER BY captured_at DESC LIMIT 50`
-  ).bind(like).all<Moment>();
-  results = res.results ?? [];
+  // Each word must match somewhere in the row (caption, place, or tags).
+  const words = q.split(/\s+/).filter(Boolean).slice(0, 6);
+
+  const momentCond = words
+    .map((_, i) => `(caption LIKE ?${i + 1} OR place LIKE ?${i + 1} OR ai_tags LIKE ?${i + 1})`)
+    .join(' AND ');
+  const thoughtCond = words
+    .map((_, i) => `(body LIKE ?${i + 1} OR place LIKE ?${i + 1})`)
+    .join(' AND ');
+  const expCond = words
+    .map((_, i) => `(title LIKE ?${i + 1} OR summary LIKE ?${i + 1} OR place LIKE ?${i + 1})`)
+    .join(' AND ');
+  const likes = words.map((w) => `%${w}%`);
+
+  const [m, t, e] = await Promise.all([
+    env.DB.prepare(`SELECT * FROM moments WHERE ${momentCond} ORDER BY captured_at DESC LIMIT 50`)
+      .bind(...likes).all<Moment>(),
+    env.DB.prepare(`SELECT * FROM thoughts WHERE ${thoughtCond} ORDER BY created_at DESC LIMIT 25`)
+      .bind(...likes).all<Thought>(),
+    env.DB.prepare(
+      `SELECT e.*, COUNT(m.id) AS moment_count,
+              (SELECT cloudinary_public_id FROM moments
+               WHERE experience_id = e.id AND cloudinary_public_id IS NOT NULL
+               ORDER BY captured_at ASC LIMIT 1) AS cover_public_id
+       FROM experiences e LEFT JOIN moments m ON m.experience_id = e.id
+       WHERE ${expCond} GROUP BY e.id ORDER BY e.start_at DESC LIMIT 25`
+    ).bind(...likes).all<Experience>(),
+  ]);
+  moments = m.results ?? [];
+  thoughts = t.results ?? [];
+  experiences = e.results ?? [];
 }
+
+const total = moments.length + thoughts.length + experiences.length;
 ---
 <Layout title="Search · OGENEO" active="search">
   <form class="search" method="get" action="/search">
-    <input type="search" name="q" value={q} placeholder="Captions, places, tags…" autofocus />
+    <input type="search" name="q" value={q} placeholder="Captions, places, tags, comets…" autofocus />
     <button type="submit">Search</button>
   </form>
-  {q && <p class="muted count">{results.length} result{results.length === 1 ? '' : 's'} for “{q}”</p>}
-  <div class="list">
-    {results.map((m) => <MomentCard moment={m} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+  {q && <p class="muted count">{total} result{total === 1 ? '' : 's'} for “{q}”</p>}
+  <div class="grid">
+    {experiences.map((e) => <ExperienceCard experience={e} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+    {moments.map((m) => <MomentCard moment={m} cloudName={env.CLOUDINARY_CLOUD_NAME} />)}
+    {thoughts.map((t) => <ThoughtCard thought={t} />)}
   </div>
 </Layout>
 
@@ -40,5 +74,9 @@ if (q) {
     border-radius: 999px; padding: 0 22px; font-family: var(--serif); font-size: 16px; cursor: pointer;
   }
   .count { margin: 0 0 16px; }
-  .list { display: flex; flex-direction: column; gap: 16px; }
+  .grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: stretch;
+  }
+  @media (max-width: 1020px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 11px; } }
 </style>
