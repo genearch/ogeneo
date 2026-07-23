@@ -1,38 +1,87 @@
 ---
-import type { Wandering } from '../lib/types';
-interface Props { wandering: Wandering; }
-const { wandering } = Astro.props;
+interface Weather { tempC: number; tempF: number; emoji: string; }
+interface Stats { days: number; miles: number | null; moments: number; homePlace: string | null; }
+interface Props {
+  wandering: { place: string; note?: string; since?: string; country?: string; timezone?: string };
+  weather?: Weather | null;
+  stats?: Stats | null;
+}
+const { wandering, weather = null, stats = null } = Astro.props;
+
+const flag = wandering.country && /^[A-Za-z]{2}$/.test(wandering.country)
+  ? String.fromCodePoint(...[...wandering.country.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65))
+  : null;
 ---
-<div class="wander">
-  <span class="pulse" aria-hidden="true"></span>
-  <div>
-    <p class="label muted">Currently wandering</p>
-    <p class="place">{wandering.place}</p>
+<div class="wander" id="wander-card" data-tz={wandering.timezone ?? ''} title={stats ? 'Tap for journey stats' : undefined}>
+  <div class="face front">
+    <p class="label">📍 Currently wandering</p>
+    <p class="place">{flag && <span class="flag">{flag}</span>}{wandering.place}</p>
     {wandering.note && <p class="note muted">{wandering.note}</p>}
+    <p class="strip muted">
+      {weather && <span>{weather.emoji} {weather.tempF}°F ({weather.tempC}°C)</span>}
+      <span class="clock" id="wander-clock"></span>
+    </p>
   </div>
+  {stats && (
+    <div class="face back" hidden>
+      <p class="label">🧭 The journey so far</p>
+      <p class="stat"><strong>{stats.days}</strong> day{stats.days === 1 ? '' : 's'} here</p>
+      {stats.miles != null && (
+        <p class="stat"><strong>{stats.miles.toLocaleString()}</strong> miles from {stats.homePlace ?? 'home'}</p>
+      )}
+      <p class="stat"><strong>{stats.moments}</strong> moment{stats.moments === 1 ? '' : 's'} since arriving</p>
+    </div>
+  )}
 </div>
+
+<script>
+  const card = document.getElementById('wander-card');
+  if (card) {
+    const tz = card.dataset.tz || undefined;
+    const clock = document.getElementById('wander-clock');
+    const tick = () => {
+      if (!clock) return;
+      try {
+        clock.textContent = new Date().toLocaleTimeString('en-US', {
+          hour: 'numeric', minute: '2-digit', timeZone: tz,
+        });
+      } catch { clock.textContent = ''; }
+    };
+    tick();
+    setInterval(tick, 15000);
+
+    const front = card.querySelector('.front');
+    const back = card.querySelector('.back');
+    if (back) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const flipped = !back.hidden;
+        back.hidden = flipped;
+        front?.toggleAttribute('hidden', !flipped);
+      });
+    }
+  }
+</script>
 
 <style>
   .wander {
-    display: flex; gap: 14px; align-items: center;
-    background: linear-gradient(135deg, var(--card), color-mix(in srgb, var(--burgundy) 30%, var(--card)));
+    background: linear-gradient(135deg, var(--card-thought), color-mix(in srgb, var(--burgundy) 32%, var(--card)));
     border: 1px solid var(--card-edge);
     border-radius: 14px;
-    padding: 16px 18px;
+    padding: 16px 20px;
+    user-select: none;
   }
-  .pulse {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 60%, transparent);
-    animation: pulse 2.4s infinite;
-    flex: 0 0 auto;
+  .label {
+    margin: 0 0 8px; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--gold);
   }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 50%, transparent); }
-    70% { box-shadow: 0 0 0 12px transparent; }
-    100% { box-shadow: 0 0 0 0 transparent; }
+  .place { margin: 0; font-family: var(--display); font-size: 28px; color: var(--text); font-weight: 500; }
+  .flag { margin-right: 10px; }
+  .note { margin: 4px 0 0; font-size: 16px; }
+  .strip { margin: 12px 0 0; display: flex; justify-content: space-between; gap: 14px; font-size: 15px; }
+  .stat { margin: 6px 0 0; font-size: 17px; color: var(--text-dim); }
+  .stat strong { color: var(--gold); font-weight: 600; }
+  @media (max-width: 720px) {
+    .place { font-size: 24px; }
   }
-  .label { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; }
-  .place { margin: 2px 0 0; font-family: var(--display); font-size: 24px; color: var(--gold); }
-  .note { margin: 2px 0 0; font-size: 15px; }
 </style>

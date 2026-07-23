@@ -20,4 +20,5 @@ INSERT INTO thoughts (body, created_at, lat, lng, place) VALUES
 ('63 years in and I still cannot pack light.', '2026-07-17T19:30:00Z', NULL, NULL, NULL);
 
 INSERT INTO settings (key, value) VALUES
-('currently_wandering', '{"place":"Home base","note":"Planning the next one.","since":"2026-07-21"}');
+('currently_wandering', '{"place":"Pépieux, France","note":"Researching village cafés ☕","since":"2026-07-20","lat":43.2919,"lng":2.6786,"country":"FR","timezone":"Europe/Paris"}'),
+('home', '{"place":"home","lat":34.2164,"lng":-119.0376}');

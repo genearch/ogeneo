@@ -16,6 +16,7 @@
 import type { APIRoute } from 'astro';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { groupIntoExperience, inferTags } from '../../lib/enrich';
+import { maybeUpdateWandering } from '../../lib/wander';
 import type { Env, Moment } from '../../lib/types';
 
 export const prerender = false;
@@ -109,6 +110,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     experience_id = await groupIntoExperience(env, row);
   } catch {
     /* grouping is an enhancement, not a requirement */
+  }
+
+  // 4. Apollo's dynamic wandering: far-from-the-pin photos move the pin
+  try {
+    await maybeUpdateWandering(env, row);
+  } catch {
+    /* also best-effort */
   }
 
   return json({
