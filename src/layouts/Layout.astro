@@ -21,9 +21,6 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   <body>
     <header class="site-header">
       <div class="header-inner">
-        <button class="hamburger" aria-label="Menu" onclick="document.body.classList.toggle('menu-open')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
         <a class="wordmark" href="/">OGENEO</a>
         <nav class="top-nav" aria-label="Primary">
           <a href="/" class:list={[{ active: active === 'home' }]}>Home</a>
@@ -36,13 +33,6 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
         </form>
         <a class="avatar" href="/about" aria-label="About Gene">G</a>
       </div>
-      <nav class="mobile-menu" aria-label="Menu">
-        <a href="/">Home</a>
-        <a href="/map">Map</a>
-        <a href="/experiences">Experiences</a>
-        <a href="/search">Search</a>
-        <a href="/about">About</a>
-      </nav>
     </header>
 
     <main class="page">
@@ -113,17 +103,12 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
     max-width: 1180px; margin: 0 auto; padding: 14px 20px;
     display: flex; align-items: center; gap: 26px;
   }
-  .hamburger {
-    display: none;
-    background: none; border: none; color: var(--text); cursor: pointer; padding: 4px;
-  }
-  .hamburger svg { width: 24px; height: 24px; }
   .wordmark {
-    display: none;
     font-family: var(--display);
-    font-size: 24px; font-weight: 500;
-    letter-spacing: 0.32em; text-indent: 0.32em;
+    font-size: 23px; font-weight: 500;
+    letter-spacing: 0.3em; text-indent: 0.3em;
     color: var(--gold);
+    flex: 0 0 auto;
   }
   .top-nav { display: flex; gap: 30px; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
   .top-nav a { padding-bottom: 5px; border-bottom: 2px solid transparent; }
@@ -144,15 +129,6 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
     border: 1px solid var(--card-edge);
     flex: 0 0 auto;
   }
-  .mobile-menu {
-    display: none;
-    flex-direction: column;
-    border-top: 1px solid var(--card-edge);
-    padding: 6px 22px 14px;
-  }
-  .mobile-menu a { padding: 9px 0; color: var(--text-dim); font-size: 17px; }
-  body.menu-open .mobile-menu { display: flex; }
-
   .page { max-width: 1180px; margin: 0 auto; padding: 18px 16px 104px; }
 
   .tab-bar {
@@ -186,14 +162,9 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   @media (max-width: 720px) {
     .top-nav, .header-search { display: none; }
     .tab-bar { display: flex; }
-    .hamburger { display: block; }
-    .wordmark { display: block; font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); }
-    .header-inner { justify-content: space-between; position: relative; }
+    .header-inner { justify-content: space-between; }
     .avatar { width: 34px; height: 34px; font-size: 17px; }
     .page { padding-bottom: 110px; }
-  }
-  @media (min-width: 721px) {
-    .mobile-menu { display: none !important; }
   }
 
   /* Shared bits */

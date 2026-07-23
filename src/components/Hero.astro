@@ -51,5 +51,11 @@
   .art { color: color-mix(in srgb, var(--text) 55%, transparent); flex: 0 0 400px; }
   .art svg { width: 100%; height: auto; }
   @media (max-width: 960px) { .art { flex-basis: 300px; } h1 { font-size: 42px; } }
-  @media (max-width: 720px) { .hero { display: none; } }
+  @media (max-width: 720px) {
+    .hero { flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 4px 12px; }
+    h1 { font-size: 31px; margin-bottom: 8px; }
+    .sub { font-size: 21px; margin-bottom: 12px; }
+    .divider { max-width: 240px; width: 100%; }
+    .art { flex-basis: auto; width: 74%; align-self: flex-end; margin-top: -6px; }
+  }
 </style>
