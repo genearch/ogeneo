@@ -17,7 +17,7 @@
     }
   ],
   "vars": {
-    "CLOUDINARY_CLOUD_NAME": "REPLACE_ME"
+    "CLOUDINARY_CLOUD_NAME": "fnx7rpyi"
   }
   // Secrets (set via `wrangler secret put`):
   //   UPLOAD_SECRET        - shared secret the iPhone Shortcut sends
