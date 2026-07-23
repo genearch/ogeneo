@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Add a Moment · OGENEO" active="home">
+  <div class="add">
+    <p class="hand">Moments don't get typed in.</p>
+    <p class="muted">
+      Share a photo from your iPhone camera roll using the
+      <strong>Post to OgeneO</strong> Shortcut, and it appears here —
+      enriched, placed, and grouped into an Experience when it belongs to one.
+    </p>
+    <p class="muted small">Setup lives in <code>docs/shortcut.md</code> in the project.</p>
+  </div>
+</Layout>
+
+<style>
+  .add { max-width: 560px; margin: 8vh auto 0; text-align: center; padding: 0 12px; }
+  .hand { font-family: var(--hand); font-size: 34px; color: var(--gold); margin: 0 0 14px; }
+  .small { font-size: 14px; }
+  code { color: var(--gold); }
+</style>

@@ -21,6 +21,9 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
   <body>
     <header class="site-header">
       <div class="header-inner">
+        <button class="hamburger" aria-label="Menu" onclick="document.body.classList.toggle('menu-open')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
         <a class="wordmark" href="/">OGENEO</a>
         <nav class="top-nav" aria-label="Primary">
           <a href="/" class:list={[{ active: active === 'home' }]}>Home</a>
@@ -28,7 +31,14 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
           <a href="/experiences" class:list={[{ active: active === 'collections' }]}>Collections</a>
           <a href="/search" class:list={[{ active: active === 'search' }]}>Search</a>
         </nav>
+        <a class="avatar" href="/" aria-label="Profile">G</a>
       </div>
+      <nav class="mobile-menu" aria-label="Menu">
+        <a href="/">Home</a>
+        <a href="/map">Map</a>
+        <a href="/experiences">Collections</a>
+        <a href="/search">Search</a>
+      </nav>
     </header>
 
     <main class="page">
@@ -44,6 +54,9 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         <span>Map</span>
       </a>
+      <a href="/add" class="add-btn" aria-label="Add a Moment">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </a>
       <a href="/experiences" class:list={[{ active: active === 'collections' }]}>
         <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 6V4h8v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         <span>Collections</span>
@@ -58,14 +71,14 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
 
 <style is:global>
   :root {
-    --bg: #0e0b09;
-    --card: #1b1512;
-    --card-edge: #2a211c;
+    --bg: #100c0a;
+    --card: #1e1713;
+    --card-edge: #2b211b;
     --text: #efe7dc;
-    --text-dim: #9b8d80;
+    --text-dim: #99897b;
     --gold: #c9a468;
     --burgundy: #5d2233;
-    --burgundy-bright: #7a2c42;
+    --burgundy-bright: #8a3448;
     --serif: 'EB Garamond', Georgia, serif;
     --display: 'Cormorant Garamond', Georgia, serif;
     --hand: 'Caveat', cursive;
@@ -77,8 +90,8 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
     background: var(--bg);
     color: var(--text);
     font-family: var(--serif);
-    font-size: 18px;
-    line-height: 1.5;
+    font-size: 17px;
+    line-height: 1.45;
     min-height: 100dvh;
   }
   a { color: inherit; text-decoration: none; }
@@ -86,56 +99,94 @@ const { title = 'OGENEO', active = 'home' } = Astro.props;
 
   .site-header {
     position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--card-edge);
   }
   .header-inner {
-    max-width: 1060px; margin: 0 auto; padding: 14px 20px;
-    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    max-width: 1060px; margin: 0 auto; padding: 12px 18px;
+    display: flex; align-items: center; gap: 18px;
   }
+  .hamburger {
+    display: none;
+    background: none; border: none; color: var(--text); cursor: pointer; padding: 4px;
+  }
+  .hamburger svg { width: 24px; height: 24px; }
   .wordmark {
     font-family: var(--display);
-    font-size: 30px; font-weight: 500;
-    letter-spacing: 0.35em; text-indent: 0.35em;
+    font-size: 27px; font-weight: 500;
+    letter-spacing: 0.32em; text-indent: 0.32em;
     color: var(--gold);
   }
-  .top-nav { display: flex; gap: 26px; font-size: 16px; color: var(--text-dim); }
+  .top-nav { display: flex; gap: 26px; font-size: 16px; color: var(--text-dim); margin-left: auto; }
   .top-nav a.active, .top-nav a:hover { color: var(--gold); }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--burgundy), var(--gold));
+    color: var(--text); font-family: var(--display); font-size: 18px;
+    border: 1px solid var(--card-edge);
+    flex: 0 0 auto;
+  }
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    border-top: 1px solid var(--card-edge);
+    padding: 6px 22px 14px;
+  }
+  .mobile-menu a { padding: 9px 0; color: var(--text-dim); font-size: 17px; }
+  body.menu-open .mobile-menu { display: flex; }
 
-  .page { max-width: 1060px; margin: 0 auto; padding: 24px 20px 96px; }
+  .page { max-width: 1060px; margin: 0 auto; padding: 18px 16px 104px; }
 
   .tab-bar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
     display: none;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    align-items: flex-end;
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--card-edge);
     padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
   }
   .tab-bar a {
     flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    color: var(--text-dim); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
   }
   .tab-bar a.active { color: var(--burgundy-bright); }
   .tab-bar svg { width: 22px; height: 22px; }
+  .tab-bar .add-btn {
+    flex: 0 0 62px;
+    width: 54px; height: 54px; margin: 0 4px 6px; align-self: center;
+    border-radius: 50%;
+    background: var(--burgundy);
+    border: 1px solid var(--burgundy-bright);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+    transform: translateY(-8px);
+  }
+  .tab-bar .add-btn svg { width: 26px; height: 26px; }
 
   @media (max-width: 720px) {
     .top-nav { display: none; }
     .tab-bar { display: flex; }
-    .header-inner { justify-content: center; }
-    .wordmark { font-size: 26px; }
-    .page { padding-bottom: 110px; }
+    .hamburger { display: block; }
+    .header-inner { justify-content: space-between; }
+    .wordmark { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); }
+    .header-inner { position: relative; }
+  }
+  @media (min-width: 721px) {
+    .mobile-menu { display: none !important; }
   }
 
   /* Shared bits */
   .glyph {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 26px; border-radius: 7px;
-    background: color-mix(in srgb, var(--bg) 55%, transparent);
-    border: 1px solid var(--card-edge);
+    width: 30px; height: 23px; border-radius: 6px;
+    background: color-mix(in srgb, var(--bg) 62%, transparent);
+    border: 1px solid color-mix(in srgb, var(--card-edge) 70%, var(--gold) 30%);
     color: var(--gold);
   }
-  .glyph svg { width: 20px; height: 14px; }
+  .glyph svg { width: 17px; height: 12px; }
   .muted { color: var(--text-dim); }
 </style>
