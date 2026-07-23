@@ -11,9 +11,19 @@ const moment = Number.isFinite(id)
   : null;
 if (!moment) return new Response('Not found', { status: 404 });
 
-const experience = moment.experience_id
-  ? await env.DB.prepare(`SELECT * FROM experiences WHERE id = ?1`).bind(moment.experience_id).first<Experience>()
-  : null;
+const [experience, older, newer] = await Promise.all([
+  moment.experience_id
+    ? env.DB.prepare(`SELECT * FROM experiences WHERE id = ?1`).bind(moment.experience_id).first<Experience>()
+    : Promise.resolve(null),
+  env.DB.prepare(
+    `SELECT id, caption FROM moments WHERE (captured_at < ?1) OR (captured_at = ?1 AND id < ?2)
+     ORDER BY captured_at DESC, id DESC LIMIT 1`
+  ).bind(moment.captured_at, moment.id).first<{ id: number; caption: string | null }>(),
+  env.DB.prepare(
+    `SELECT id, caption FROM moments WHERE (captured_at > ?1) OR (captured_at = ?1 AND id > ?2)
+     ORDER BY captured_at ASC, id ASC LIMIT 1`
+  ).bind(moment.captured_at, moment.id).first<{ id: number; caption: string | null }>(),
+]);
 
 const tags: string[] = moment.ai_tags ? JSON.parse(moment.ai_tags) : [];
 const captured = new Date(moment.captured_at).toLocaleString('en-US', {
@@ -22,13 +32,33 @@ const captured = new Date(moment.captured_at).toLocaleString('en-US', {
 ---
 <Layout title={moment.caption ?? 'Moment'} active="home">
   <article class="moment">
-    {moment.cloudinary_public_id && (
-      <img
-        class="hero"
-        src={imgUrl(env.CLOUDINARY_CLOUD_NAME, moment.cloudinary_public_id, 'f_auto,q_auto,w_1600')}
-        alt={moment.caption ?? 'Moment'}
-      />
-    )}
+    <div class="topbar">
+      <a class="back" href="/" aria-label="Back to the feed" onclick="if (history.length > 1) { history.back(); return false; }">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Back</span>
+      </a>
+    </div>
+
+    <div class="stage">
+      {newer && (
+        <a class="nav prev" href={`/moments/${newer.id}`} aria-label="Newer moment" title={newer.caption ?? 'Newer moment'}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      )}
+      {moment.cloudinary_public_id && (
+        <img
+          class="hero"
+          src={imgUrl(env.CLOUDINARY_CLOUD_NAME, moment.cloudinary_public_id, 'f_auto,q_auto,w_1600')}
+          alt={moment.caption ?? 'Moment'}
+        />
+      )}
+      {older && (
+        <a class="nav next" href={`/moments/${older.id}`} aria-label="Older moment" title={older.caption ?? 'Older moment'}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      )}
+    </div>
+
     <div class="info">
       <p class="glyph-row"><SourceGlyph source={moment.source} />
         <span class="muted">{moment.source === 'meta' ? 'Through My Eyes' : moment.camera_model ?? 'Photo'}</span>
@@ -45,21 +75,69 @@ const captured = new Date(moment.captured_at).toLocaleString('en-US', {
         </a>
       )}
     </div>
+
+    <div class="pager">
+      {newer ? (
+        <a href={`/moments/${newer.id}`}>← Newer</a>
+      ) : <span class="muted dim">← Newer</span>}
+      {older ? (
+        <a href={`/moments/${older.id}`}>Older →</a>
+      ) : <span class="muted dim">Older →</span>}
+    </div>
   </article>
 </Layout>
 
+<script>
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') (document.querySelector('.nav.prev') as HTMLAnchorElement | null)?.click();
+    if (e.key === 'ArrowRight') (document.querySelector('.nav.next') as HTMLAnchorElement | null)?.click();
+  });
+</script>
+
 <style>
   .moment { max-width: 860px; margin: 0 auto; }
+  .topbar { margin-bottom: 12px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--text-dim); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 10px 6px 4px; border-radius: 8px;
+  }
+  .back:hover { color: var(--gold); }
+  .back svg { width: 20px; height: 20px; }
+  .stage { position: relative; }
   .hero { width: 100%; border-radius: 16px; border: 1px solid var(--card-edge); }
-  .info { padding: 22px 4px; }
+  .nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,7,6,0.55); border: 1px solid var(--card-edge);
+    color: var(--text); backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+  .nav:hover { color: var(--gold); border-color: var(--gold); }
+  .nav svg { width: 22px; height: 22px; }
+  .nav.prev { left: 10px; }
+  .nav.next { right: 10px; }
+  .info { padding: 20px 4px; }
   .glyph-row { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
   .lily {
     font-family: var(--hand); font-size: 20px; color: var(--gold);
     border: 1px dashed var(--gold); border-radius: 999px; padding: 2px 12px;
   }
-  h1 { font-family: var(--display); font-weight: 500; font-size: 34px; margin: 0 0 6px; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: 32px; margin: 0 0 6px; }
   .tags { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 0; }
   .tag { color: var(--gold); font-size: 15px; }
-  .exp-link { display: inline-block; margin-top: 18px; color: var(--text-dim); }
+  .exp-link { display: inline-block; margin-top: 16px; color: var(--text-dim); }
   .exp-link:hover { color: var(--gold); }
+  .pager {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 4px 4px 8px; font-size: 15px;
+  }
+  .pager a { color: var(--text-dim); }
+  .pager a:hover { color: var(--gold); }
+  .dim { opacity: 0.35; }
+  @media (max-width: 720px) {
+    h1 { font-size: 25px; }
+    .nav { width: 38px; height: 38px; }
+  }
 </style>
